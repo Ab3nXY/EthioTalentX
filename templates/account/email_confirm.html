@@ -1,0 +1,53 @@
+{% extends "base.html" %}
+{% load allauth i18n %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% load account %}
+{% load allauth %}
+{% block head_title %}
+    {% trans "Confirm Email Address" %}
+{% endblock head_title %}
+{% block content %}
+
+    {% if confirmation %}
+        {% user_display confirmation.email_address.user as user_display %}
+        {% if can_confirm %}
+        <p style="text-align: center; color: white; font-size: larger; margin-top: 50px;">
+                {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an email address for user {{ user_display }}.{% endblocktrans %}
+            </p>
+            {% url 'account_confirm_email' confirmation.key as action_url %}
+            <div class="container text-white"> 
+                <div class="row justify-content-center">
+                    <div class="col-lg-4 col-md-6 col-sm-12">
+                        <form method="post" action="{{ action_url }}">
+                            {% csrf_token %}
+                            {{ form|crispy }}
+                            <button type="submit" class="btn btn-primary btn-block">{% trans "Confirm" %}</button>
+                        </form>
+                    </div>
+                </div>
+            </div>
+        {% else %}
+        <div class="container text-white" style="margin-top: 50px;"> 
+            <div class="row justify-content-center">
+                <div class="col-lg-9 mx-auto">
+                    <p style="text-align: center; color: red; font-size: larger;">
+                        {% blocktrans %}Unable to confirm {{ email }} because it is already confirmed by a different account.{% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+        {% endif %}
+    {% else %}
+        {% url 'account_email' as email_url %}
+        <div class="container text-white" style="margin-top: 50px;"> 
+            <div class="row justify-content-center">
+                <div class="col-lg-9 mx-auto">
+                    <p style="text-align: center; color: red; font-size: larger;">
+                        {% blocktrans %}This email confirmation link expired or is invalid. Please <a href="{{ email_url }}">issue a new email confirmation request</a>.{% endblocktrans %}
+                    </p>
+                </div>
+            </div>
+        </div>
+    {% endif %}
+{% endblock content %}

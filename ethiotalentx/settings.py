@@ -43,6 +43,13 @@ EMAIL_USE_TLS = os.getenv('EMAIL_USE_TLS')
 CRISPY_ALLOWED_TEMPLATE_PACKS = "bootstrap5"
 CRISPY_TEMPLATE_PACK = "bootstrap5"
 
+#allauth configs
+ACCOUNT_LOGOUT_ON_GET= True
+ACCOUNT_EMAIL_REQUIRED=True
+ACCOUNT_AUTHENTICATION_METHOD = "username_email"
+ACCOUNT_EMAIL_VERIFICATION = 'mandatory'
+
+
 # Application definition
 
 INSTALLED_APPS = [

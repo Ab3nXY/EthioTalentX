@@ -21,15 +21,10 @@
                     <form method="post" action="{{ action_url }}">
                         {% csrf_token %}
                         {{ form|crispy }}
-                        {{ redirect_field }}
                         <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
                     </form>
                 </div>
             </div>
-            <br>
-            <p style="text-align: center;">
-                {% blocktranslate %}Already have an account? Then please {{ link }}Login{{ end_link }}.{% endblocktranslate %}
-            </p>
         </div>
     {% endif %}
     {% if SOCIALACCOUNT_ENABLED %}
