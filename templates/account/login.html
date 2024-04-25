@@ -1,13 +1,12 @@
-{% extends "account/base_entrance.html" %}
+{% extends "base.html" %}
 {% load i18n %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
 {% load allauth account %}
 {% block head_title %}
     {% trans "Sign In" %}
 {% endblock head_title %}
 {% block content %}
-    {% element h1 %}
-        {% trans "Sign In" %}
-    {% endelement %}
     {% if not SOCIALACCOUNT_ONLY %}
         {% setvar link %}
             <a href="{{ signup_url }}">
@@ -15,23 +14,24 @@
             {% setvar end_link %}
             </a>
         {% endsetvar %}
-        <p>
-            {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
-        </p>
+
         {% url 'account_login' as login_url %}
-        {% element form form=form method="post" action=login_url tags="entrance,login" %}
-            {% slot body %}
-                {% csrf_token %}
-                {% element fields form=form unlabeled=True %}
-                {% endelement %}
-                {{ redirect_field }}
-            {% endslot %}
-            {% slot actions %}
-                {% element button type="submit" tags="prominent,login" %}
-                    {% trans "Sign In" %}
-                {% endelement %}
-            {% endslot %}
-        {% endelement %}
+        <div class="container text-white" style="margin-top: 150px;"> 
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 col-sm-12 mx-auto">
+                    <form method="post" action="{{ login_url }}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        {{ redirect_field }}
+                        <button type="submit" class="btn btn-primary">{% trans "Login" %}</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <p style="text-align: center;">
+                {% blocktranslate %}If you have not created an account yet, then please {{ link }}sign up{{ end_link }} first.{% endblocktranslate %}
+            </p>
+        </div>
     {% endif %}
     {% if LOGIN_BY_CODE_ENABLED %}
         {% element hr %}

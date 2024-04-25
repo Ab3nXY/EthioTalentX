@@ -45,9 +45,6 @@ html, body {
 }
 
 .nav-link:hover {
-    color: lightgray;  /* Adjust link hover color */
+    color: blue;  /* Adjust link hover color */
 }
 
-.navbar {
-    opacity: 0.8;
-}

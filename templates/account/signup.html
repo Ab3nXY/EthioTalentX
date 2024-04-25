@@ -1,6 +1,7 @@
-{% extends "account/base_entrance.html" %}
-{% load crispy_forms_tags %}
+{% extends "base.html" %}
 {% load allauth i18n %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
 {% block head_title %}
     {% trans "Signup" %}
 {% endblock head_title %}
@@ -14,22 +15,24 @@
         {% setvar end_link %}
         </a>
     {% endsetvar %}
-    <p>{% blocktranslate %}Already have an account? Then please {{ link }}sign in{{ end_link }}.{% endblocktranslate %}</p>
     {% if not SOCIALACCOUNT_ONLY %}
         {% url 'account_signup' as action_url %}
-        {% element form form=form method="post" action=action_url tags="entrance,signup" %}
-            {% slot body %}
-                {% csrf_token %}
-                {% element fields form=form unlabeled=True %}
-                {% endelement %}
-                {{ redirect_field }}
-            {% endslot %}
-            {% slot actions %}
-                {% element button tags="prominent,signup" type="submit" %}
-                    {% trans "Sign Up" %}
-                {% endelement %}
-            {% endslot %}
-        {% endelement %}
+        <div class="container text-white" style="margin-top: 50px;"> 
+            <div class="row justify-content-center">
+                <div class="col-lg-4 col-md-6 col-sm-12 mx-auto">
+                    <form method="post" action="{{ action_url }}">
+                        {% csrf_token %}
+                        {{ form|crispy }}
+                        {{ redirect_field }}
+                        <button type="submit" class="btn btn-primary btn-block">{% trans "Sign Up" %}</button>
+                    </form>
+                </div>
+            </div>
+            <br>
+            <p style="text-align: center;">
+                {% blocktranslate %}Already have an account? Then please {{ link }}Login{{ end_link }}.{% endblocktranslate %}
+            </p>
+        </div>
     {% endif %}
     {% if SOCIALACCOUNT_ENABLED %}
         {% include "socialaccount/snippets/login.html" with page_layout="entrance" %}
