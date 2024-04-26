@@ -1,0 +1,43 @@
+{% extends "base.html" %}
+{% load crispy_forms_tags %}
+{% load crispy_forms_filters %}
+{% block head_title %}
+    Profile
+{% endblock head_title %}
+
+{% block content %}
+<div class="container text-white">
+    <div class="container mt-4">
+        <form method="post" enctype="multipart/form-data">
+            <div class="col-md-6 d-flex align-items-center">
+                <div class="text-center flex-grow-1">
+                    <div class="img-upload-container">
+                        <div class="img-preview">
+                            <img src="{{ user.profile.image.url }}" class="img-thumbnail cursor-pointer" id="profile-upload" style="height: 100px; width: 100px; border-radius: 50%; margin-right: 20px;">
+                            <label for="image" class="cursor-pointer">
+                                <button type="button" class="btn btn-secondary">Browse...</button>
+                                <input type="file" class="d-none" id="image" name="image" onchange="previewImage(event)">
+                            </label>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            {% csrf_token %}
+            {% crispy form %}
+        </form>
+    </div>
+</div>
+{% endblock content %}
+
+{% block extrascripts %}
+<script>
+  function previewImage(event) {
+      var reader = new FileReader();
+      reader.onload = function () {
+          var output = document.getElementById('profile-upload');
+          output.src = reader.result;
+      }
+      reader.readAsDataURL(event.target.files[0]);
+  }
+</script>
+{% endblock extrascripts %}

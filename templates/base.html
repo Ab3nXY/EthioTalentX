@@ -24,8 +24,6 @@
         <div class="background-overlay"></div>
         <div class="background-image"></div>
     </div>
-    
-    <header>
         <nav class="navbar navbar-expand-lg navbar-dark border-bottom border-1 border-secondary">
             <div class="container-fluid">
                 <a class="navbar-brand" href="/">
@@ -53,9 +51,33 @@
                 </div>
             </div>
         </nav>
-    </header>
-
+{% if user.is_authenticated %}
+<!-- Sidebar -->
+<div class="sidebar" id="sidebar">
+    <ul class="sidebar-nav">
+        <li class="nav-item mt-2">
+            <a class="nav-link" href="{% url 'dashboard' %}">
+                <i class="fas fa-home me-2"></i><span class="sidebar-text">Dashboard</span>
+            </a>
+        </li>
+        <li class="nav-item mt-2">
+            <a class="nav-link" href="{% url 'profile' %}">
+                <i class="fas fa-user me-2"></i><span class="sidebar-text">Profile</span>
+            </a>
+        </li>
+        <li class="nav-item mt-2">
+            <a class="nav-link" href="{% url 'dashboard' %}">
+                <i class="fas fa-briefcase me-2"></i><span class="sidebar-text">Experience</span>
+            </a>
+        </li>
+        <!-- Add more sidebar icons as needed -->
+    </ul>
+</div>
+    {% endif %}
     {% block content %}
     {% endblock content %}
+
+    {% block extrascripts %}
+    {% endblock extrascripts %}
 </body>
 </html>

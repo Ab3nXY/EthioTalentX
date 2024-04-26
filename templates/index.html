@@ -5,6 +5,8 @@
 {% endblock head_title %}
 
 {% block content %}
+{% if user.is_authenticated %}
+{% else %}
 <div class="container-fluid h-100d-flex flex-column justify-content-center" style="margin-top: 10%;">
     <div class="row h-100 justify-content-center align-items-center">
         <div class="col-md-9">
@@ -17,4 +19,5 @@
         </div>
     </div>
 </div>
+{% endif %}
 {% endblock content %}
