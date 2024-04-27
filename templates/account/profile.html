@@ -37,6 +37,10 @@
     {% endif %}
   </div>
 </div>
+    {% if profile %}
+    <ul>
+        <li>Username: {{ profile.user.username }}</li>  </ul>
+    {% endif %}
 {% endblock content %}
 
 {% block extrascripts %}
