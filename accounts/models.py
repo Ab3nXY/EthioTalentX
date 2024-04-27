@@ -16,39 +16,41 @@ OCCUPATION_CHOICES = [
 ]
 
 SKILLS_CHOICES = [
-    ('HTML', 'HTML'),
-    ('CSS', 'CSS'),
-    ('JavaScript', 'JavaScript'),
-    ('React', 'React'),
-    ('Node', 'Node.js'),
-    ('Angular', 'Angular'),
-    ('Vue', 'Vue.js'),
-    ('Bootstrap', 'Bootstrap'),
-    ('jQuery', 'jQuery'),
-    ('Django', 'Django'),
-    ('Flask', 'Flask'),
-    ('Python', 'Python'),
-    ('Java', 'Java'),
-    ('C++', 'C++'),
-    ('C#', 'C#'),
-    ('Ruby', 'Ruby'),
-    ('PHP', 'PHP'),
-    ('SQL', 'SQL'),
-    ('MongoDB', 'MongoDB'),
-    ('PostgreSQL', 'PostgreSQL'),
-    ('Git', 'Git'),
-    ('AWS', 'Amazon Web Services (AWS)'),
-    ('Azure', 'Microsoft Azure'),
-    ('GCP', 'Google Cloud Platform (GCP)'),
-    ('Docker', 'Docker'),
-    ('Kubernetes', 'Kubernetes'),
-    ('TensorFlow', 'TensorFlow'),
-    ('PyTorch', 'PyTorch'),
-    ('Scikit-learn', 'Scikit-learn'),
-    ('Pandas', 'Pandas'),
-    ('NumPy', 'NumPy'),
-    ('Matplotlib', 'Matplotlib'),
+    ('html', 'HTML'),
+    ('css', 'CSS'),
+    ('javascript', 'JavaScript'),
+    ('react', 'React'),
+    ('node', 'Node.js'),
+    ('angular', 'Angular'),
+    ('vue', 'Vue.js'),
+    ('bootstrap', 'Bootstrap'),
+    ('jquery', 'jQuery'),
+    ('django', 'Django'),
+    ('flask', 'Flask'),
+    ('python', 'Python'),
+    ('java', 'Java'),
+    ('c_plus_plus', 'C++'),
+    ('c_sharp', 'C#'),
+    ('ruby', 'Ruby'),
+    ('php', 'PHP'),
+    ('sql', 'SQL'),
+    ('mongodb', 'MongoDB'),
+    ('postgresql', 'PostgreSQL'),
+    ('git', 'Git'),
+    ('aws', 'Amazon Web Services (AWS)'),
+    ('azure', 'Microsoft Azure'),
+    ('gcp', 'Google Cloud Platform (GCP)'),
+    ('docker', 'Docker'),
+    ('kubernetes', 'Kubernetes'),
+    ('tensorflow', 'TensorFlow'),
+    ('pytorch', 'PyTorch'),
+    ('scikit_learn', 'Scikit-learn'),
+    ('pandas', 'Pandas'),
+    ('numpy', 'NumPy'),
+    ('matplotlib', 'Matplotlib'),
 ]
+
+
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
@@ -60,7 +62,7 @@ class Profile(models.Model):
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics')
     occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=True, null=True)
-    skills = models.ManyToManyField('Skill', related_name='profiles', blank=True)
+    skills = models.ManyToManyField('Skill', related_name='profiles', blank=False)
 
     def __str__(self):
         return f'{self.user.username} Profile'

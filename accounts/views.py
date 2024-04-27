@@ -2,7 +2,7 @@ from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
 from .forms import ProfileForm
-from .models import Profile
+from .models import Profile, Skill, Education, Experience
 
 # Create your views here.
 def index(request):
@@ -23,12 +23,14 @@ def profile(request):
         # ... (Optional: Create a new profile or handle the error differently)
 
     if request.method == 'POST':
-        form = ProfileForm(request.POST, instance=profile)
+        form = ProfileForm(user=request.user, data=request.POST, files=request.FILES, instance=profile)
+        print(f"request: {request.POST}")
         if form.is_valid():
-            form.save()
-            return redirect('dashboard')  # Redirect to your desired dashboard URL pattern name
+            profile = form.save(commit=True)
+            print(f"Skills: {profile.skills}")  # Debugging output
+            return redirect('dashboard')
     else:
-        form = ProfileForm(instance=profile)
+        form = ProfileForm(user=request.user,instance=profile)
 
     context = {'profile': profile, 'form': form}
     return render(request, 'account/profile.html', context)
