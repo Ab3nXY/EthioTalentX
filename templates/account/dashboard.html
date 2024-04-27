@@ -3,7 +3,7 @@
 {% block head_title %}
     Dashboard
 {% endblock head_title %}
-
+{% block BG %}<div class="background-container">{% endblock BG %}
 {% block content %}
-<p style="text-align: center; color: white; margin-top: 50px; font-size: larger;">dashboard i say</p>
+<p style="text-align: center; color: white; margin-top: 50px; font-size: larger;">Welcome {{ user.username }}</p>
 {% endblock content %}

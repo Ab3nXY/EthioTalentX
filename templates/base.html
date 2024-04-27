@@ -20,9 +20,7 @@
     
 </head>
 <body>
-    <div class="background-container">
-        <div class="background-overlay"></div>
-        <div class="background-image"></div>
+    {% block BG %}{% endblock BG %}
     </div>
         <nav class="navbar navbar-expand-lg navbar-dark border-bottom border-1 border-secondary">
             <div class="container-fluid">
@@ -34,9 +32,12 @@
                 </button>
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-lg-0">
+                        <li class="nav-item">
+                            <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2"></i>Talent Hub</a>
+                        </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket"></i></a>
+                                <a class="nav-link" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3"></i>Logout</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
@@ -65,12 +66,6 @@
                 <i class="fas fa-user me-2"></i><span class="sidebar-text">Profile</span>
             </a>
         </li>
-        <li class="nav-item mt-2">
-            <a class="nav-link" href="{% url 'dashboard' %}">
-                <i class="fas fa-briefcase me-2"></i><span class="sidebar-text">Experience</span>
-            </a>
-        </li>
-        <!-- Add more sidebar icons as needed -->
     </ul>
 </div>
     {% endif %}

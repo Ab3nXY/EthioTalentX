@@ -1,43 +1,44 @@
 {% extends "base.html" %}
 {% load crispy_forms_tags %}
 {% load crispy_forms_filters %}
+
 {% block head_title %}
-    Profile
+  Profile
 {% endblock head_title %}
 
+{% block BG %}
+  <div class="background-container">
+  </div>
+{% endblock BG %}
+
 {% block content %}
-<div class="container text-white">
-    <div class="container mt-4">
-        <form method="post" enctype="multipart/form-data">
-            <div class="col-md-6 d-flex align-items-center">
-                <div class="text-center flex-grow-1">
-                    <div class="img-upload-container">
-                        <div class="img-preview">
-                            <img src="{{ user.profile.image.url }}" class="img-thumbnail cursor-pointer" id="profile-upload" style="height: 100px; width: 100px; border-radius: 50%; margin-right: 20px;">
-                            <label for="image" class="cursor-pointer">
-                                <button type="button" class="btn btn-secondary">Browse...</button>
-                                <input type="file" class="d-none" id="image" name="image" onchange="previewImage(event)">
-                            </label>
-                        </div>
-                    </div>
-                </div>
-            </div>
-            {% csrf_token %}
-            {% crispy form %}
-        </form>
+<div class="container">
+  <div class="container" style="padding-left: 60px;">
+    <h2>Manage Your Profile</h2>
+
+    <div class="row">
+      <div class="col-md-4">
+        <a href="{% url 'profile' %}" class="btn btn-primary mb-3">Edit Profile</a>
+      </div>
+      <div class="col-md-4">
+        <a href="{% url 'add_experience' %}" class="btn btn-success mb-3">Add Experience</a>
+      </div>
+      <div class="col-md-4">
+        <a href="{% url 'add_education' %}" class="btn btn-info mb-3">Add Education</a>
+      </div>
     </div>
+
+    {% if form %}
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        {{ form | crispy }}
+        <button type="submit" class="btn btn-primary">Save Changes</button>
+      </form>
+    {% endif %}
+  </div>
 </div>
 {% endblock content %}
 
 {% block extrascripts %}
-<script>
-  function previewImage(event) {
-      var reader = new FileReader();
-      reader.onload = function () {
-          var output = document.getElementById('profile-upload');
-          output.src = reader.result;
-      }
-      reader.readAsDataURL(event.target.files[0]);
-  }
-</script>
+
 {% endblock extrascripts %}

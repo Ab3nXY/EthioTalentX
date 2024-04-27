@@ -4,31 +4,33 @@ from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Row, Column, Submit
 
 class ProfileForm(forms.ModelForm):
-    occupation = forms.MultipleChoiceField(choices=OCCUPATION_CHOICES, widget=forms.SelectMultiple(attrs={'class': 'form-select'}))
-    skills = forms.MultipleChoiceField(choices=SKILLS_CHOICES, widget=forms.SelectMultiple(attrs={'class': 'form-select'}))
+    user = forms.CharField(widget=forms.TextInput(attrs={'readonly': True, 'class': 'form-control'}))
+    occupation = forms.ChoiceField(choices=OCCUPATION_CHOICES, initial='developer', widget=forms.Select(attrs={'class': 'form-select'}))
+    skills = forms.MultipleChoiceField(choices=SKILLS_CHOICES, widget=forms.CheckboxSelectMultiple(attrs={'class': 'form-select'}))
+
     class Meta:
         model = Profile
         fields = '__all__'
 
     def __init__(self, *args, **kwargs):
+        user_instance = kwargs.pop('user_instance', None)
         super(ProfileForm, self).__init__(*args, **kwargs)
+        if user_instance:
+            self.fields['user'].initial = user_instance.username
         self.helper = FormHelper()
-        self.helper.form_class = 'form-control'
         self.helper.layout = Layout(
             Fieldset(
                 'Profile Information',
-
                 Row(
-                    Column('status', css_class='col-md-6'),
+                    Column('occupation', css_class='col-md-6'),
                     Column('location', css_class='col-md-6'),
-                    
-                ),                
+                ),
                 Row(
                     Column('company', css_class='col-md-6'),
                     Column('website', css_class='col-md-6'),
                 ),
                 Row(
-                    Column('skills', css_class='col-md-12'),
+                    Column('skills', css_class='col-md-12 skill-columns'),
                 ),
                 Row(
                     Column('bio', css_class='col-md-12'),
@@ -37,11 +39,9 @@ class ProfileForm(forms.ModelForm):
                     Column('githubusername', css_class='col-md-6'),
                 ),
             ),
-            'experience',  # Assuming you have a separate formset for experience
-            'education',  # Assuming you have a separate formset for education
             'social',
             'date',
-            Submit('submit', 'Update Profile', css_class='btn btn-primary')
+            Submit('submit', 'Update Profile', css_class='btn btn-primary'),
         )
 
 class ExperienceForm(forms.ModelForm):

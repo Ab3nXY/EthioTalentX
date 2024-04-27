@@ -13,3 +13,12 @@ def profile(request):
 
 def dashboard(request):
   return render(request, 'account/dashboard.html')
+
+def profiles(request):
+  return render(request, 'account/profiles.html')
+
+def add_experience(request):
+  return render(request, 'account/add_experience.html')
+
+def add_education(request):
+  return render(request, 'account/add_education.html')
