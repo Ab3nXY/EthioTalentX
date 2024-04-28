@@ -33,11 +33,11 @@
                 <div class="collapse navbar-collapse" id="navbarSupportedContent">
                     <ul class="navbar-nav ms-auto mb-lg-0">
                         <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2"></i>Talent Hub</a>
+                            <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2" style="color: blue;"></i>Talent Hub</a>
                         </li>
                         {% if user.is_authenticated %}
                             <li class="nav-item">
-                                <a class="nav-link" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3"></i>Logout</a>
+                                <a class="nav-link me-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3" style="color: red;"></i>Logout</a>
                             </li>
                         {% else %}
                             <li class="nav-item">
