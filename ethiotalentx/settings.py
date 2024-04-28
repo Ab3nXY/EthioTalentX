@@ -18,8 +18,6 @@ import dj_database_url
 
 load_dotenv()
 
-SETTINGS_FILE = 'settings.py'
-
 class Dev(Configuration):
 
     # Build paths inside the project like this: BASE_DIR / 'subdir'.
@@ -195,11 +193,8 @@ class Dev(Configuration):
 
 class Prod(Dev):
 
-    DEBUG = False
+    DEBUG = True
 
     DATABASES = {
-            'default': dj_database_url.config(                
-                default = os.getenv('PG_EX_URL'),        
-                conn_max_age=600    
-                )
+            'default': dj_database_url.config(default = os.getenv('PG_EX_URL'))
             }
