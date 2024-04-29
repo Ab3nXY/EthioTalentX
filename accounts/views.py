@@ -4,6 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm, ExperienceForm, EducationForm, ExperienceFormSet
 from .models import Profile, Skill, Education, Experience
 from django.forms import formset_factory
+from django.shortcuts import get_object_or_404
 
 # Create your views here.
 def index(request):
@@ -11,27 +12,26 @@ def index(request):
 
 @login_required
 def profile(request):
-    """
-    Renders the profile view with a form for profile updates.
-    Redirects to the dashboard after successful form submission.
-    """
-
     try:
-        profile = Profile.objects.get(user=request.user)  # Assuming user is logged in and has a profile
+        profile = Profile.objects.get(user=request.user)
     except Profile.DoesNotExist:
-        # Handle case where profile doesn't exist (e.g., create a new one)
         profile = None
-        # ... (Optional: Create a new profile or handle the error differently)
 
     if request.method == 'POST':
         form = ProfileForm(user=request.user, data=request.POST, files=request.FILES, instance=profile)
-        print(f"request: {request.POST}")
         if form.is_valid():
-            profile = form.save(commit=True)
-            print(f"Skills: {profile.skills}")  # Debugging output
+            profile = form.save(commit=False)
+            skill_names = form.cleaned_data.get('skills')  # Retrieve selected skill names from the form
+            skills = []
+            # Verify skill existence and add them to the profile
+            for name in skill_names:
+                skill = get_object_or_404(Skill, name=name)  # Retrieve the skill object from the database
+                skills.append(skill)
+            profile.skills.set(skills)  # Set the skills for the profile
+            profile.save()
             return redirect('dashboard')
     else:
-        form = ProfileForm(user=request.user,instance=profile)
+        form = ProfileForm(user=request.user, instance=profile)
 
     context = {'profile': profile, 'form': form}
     return render(request, 'account/profile.html', context)
