@@ -18,16 +18,9 @@ class ProfileForm(forms.ModelForm):
         super(ProfileForm, self).__init__(*args, **kwargs)
         self.helper = FormHelper()
 
-    def save(self, user=None, commit=True):
+    def save(self, commit=True):
         profile = super().save(commit=False)
         if commit:
-            if user:
-                # Update user-related fields if provided
-                if self.cleaned_data['first_name'] != user.first_name:
-                    user.first_name = self.cleaned_data['first_name']
-                if self.cleaned_data['last_name'] != user.last_name:
-                    user.last_name = self.cleaned_data['last_name']
-                user.save()
             profile.save()
             self.save_m2m()
         return profile

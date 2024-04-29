@@ -22,19 +22,18 @@ def profile(request):
         form = ProfileForm(data=request.POST, files=request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save(commit=False)
-            skill_names = form.cleaned_data.get('skills', [])  # Retrieve selected skill names from the form
+            profile.user = request.user
+            profile.user.first_name = request.POST.get('first_name', '')  # Update first_name
+            profile.user.last_name = request.POST.get('last_name', '')  # Update last_name
+            profile.user.save()  # Save user object
+            profile.save()  # Save profile object
+            skill_names = form.cleaned_data.get('skills', [])
             skills = []
-            # Verify skill existence and add them to the profile
             for name in skill_names:
-                skill = get_object_or_404(Skill, name=name)  # Retrieve the skill object from the database
+                skill = get_object_or_404(Skill, name=name)
                 skills.append(skill)
-            profile.skills.set(skills)  # Set the skills for the profile
-            profile.save()
-            print("Redirecting to the dashboard...")
+            profile.skills.set(skills)
             return redirect('dashboard')
-        else:
-            # Debugging: Print form errors to identify any validation issues
-            print(form.errors)
     else:
         initial_skills = [skill.name for skill in profile.skills.all()] if profile else []
         form = ProfileForm(instance=profile, initial={'skills': initial_skills})
@@ -43,12 +42,10 @@ def profile(request):
     return render(request, 'account/profile.html', context)
 
 
-
 def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk)
     context = {'profile': profile}
     return render(request, 'account/profile_detail.html', context)
-
 
 @login_required
 def dashboard(request):
