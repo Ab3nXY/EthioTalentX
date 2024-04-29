@@ -28,9 +28,8 @@
               <h5 class="card-title ">{{ profile.user.first_name }}</h5>
               <p class="card-text mb-3">{{ profile.occupation}}</p> 
               <div class="col-md-8 py-3">
-                <a href="#" class="btn btn-primary" style="display: inline-block;">View Profile</a>
+                <a href="{% url 'profile_detail' pk=profile.pk %}" class="btn btn-primary" style="display: inline-block;">View Profile</a>
               </div>
-              
             </div>
             <div class="col-md-12 profile-skills list-group list-group-flush"> 
               <div class="row">

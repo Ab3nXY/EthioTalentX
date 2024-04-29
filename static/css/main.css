@@ -62,6 +62,7 @@ body {
     top: 0;
     width: 100%; /* Ensure the navbar spans the full width of the viewport */
     height: 60px;
+    z-index: 1020;
 }
 
 /* Sidebar Styles */

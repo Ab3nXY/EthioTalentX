@@ -3,7 +3,12 @@
 {% block head_title %}
     Dashboard
 {% endblock head_title %}
-{% block BG %}<div class="background-container">{% endblock BG %}
+{% block BG %}<div class="background-container"></div>{% endblock BG %}
 {% block content %}
-<p style="text-align: center; color: white; margin-top: 50px; font-size: larger;">Welcome {{ user.username }}</p>
+<div class="container mt-2 d-flex">
+    <p class="welcome-message d-flex align-items-center" style="font-size: 20px; font-weight: 500;">
+      <i class="fas fa-user me-2"></i> Welcome, {{ user.first_name }}!
+    </p>
+  </div>
+
 {% endblock content %}

@@ -36,6 +36,12 @@ def profile(request):
     context = {'profile': profile, 'form': form}
     return render(request, 'account/profile.html', context)
 
+def profile_detail(request, pk):
+    profile = get_object_or_404(Profile, pk=pk)
+    context = {'profile': profile}
+    return render(request, 'account/profile_detail.html', context)
+
+
 @login_required
 def dashboard(request):
   return render(request, 'account/dashboard.html')
@@ -51,7 +57,7 @@ def profiles(request):
         HttpResponse: A rendered HTML response containing the list of profiles.
     """
 
-    profiles = Profile.objects.all()  # Fetch all profiles
+    profiles = Profile.objects.all()
     context = {'profiles': profiles}
     return render(request, 'account/profiles.html', context)
 
