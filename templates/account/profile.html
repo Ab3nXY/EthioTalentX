@@ -7,7 +7,7 @@
 {% endblock head_title %}
 
 {% block BG %}
-  <div class="background-container">
+  <div class="background-container" style="background-color: rgb(245, 245, 245);">
   </div>
 {% endblock BG %}
 
@@ -24,15 +24,91 @@
     </div>
   </div>
 
-  <div class="row mt-4">
-    <div class="col-md-12">
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form| crispy }}
-          <button type="submit" class="btn btn-primary">Update Profile</button>
+<!-- The profile form -->
+<div class="row mt-4" style="color: grey;">
+    <div class="col-md-12">   
+
+        <div class="section-divider mt-4 mb-4 px-2 ">
+           <p> Person Information</p>
+        </div>
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_username" class="form-label">Username:</label>
+                <div style="color: black;">{{ user.username }}</div>
+              </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_email" class="form-label">Email:</label>
+                <div style="color: black;">{{ user.email}}</div>
+            </div>
+
+      <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_first_name" class="form-label">First Name:</label>
+                <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ user.first_name }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_last_name" class="form-label">Last Name:</label>
+                <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ user.last_name }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_location" class="form-label">Location:</label>
+                <input type="text" name="location" class="form-control" id="id_location" value="{{ form.location.value }}">
+              </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_image" class="form-label">Image:</label>
+                <input type="file" name="image" class="form-control" id="id_image">
+            </div>
+        </div>
+
+        <div class="section-divider mt-4 mb-4 px-2 ">
+            <p> Work Information</p>
+         </div>
+
+        <div class="row">
+        <div class="col-md-6 mb-3">
+            <label for="id_occupation" class="form-label">Occupation:</label>
+            <select name="occupation" id="id_occupation" class="form-select">
+                {% for choice in form.occupation.field.choices %}
+                <option value="{{ choice.0 }}" {% if choice.0 == form.occupation.value %}selected{% endif %}>{{ choice.1 }}</option>
+                {% endfor %}
+            </select>
+        </div>
+          <div class="col-md-6 mb-3">
+            <label for="id_company" class="form-label">Company:</label>
+            <input type="text" name="company" class="form-control" id="id_company" value="{{ form.company.value }}">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="id_website" class="form-label">Website:</label>
+            <input type="url" name="website" class="form-control" id="id_website" value="{{ form.website.value }}">
+          </div>
+          <div class="col-md-6 mb-3">
+            <label for="id_githubusername" class="form-label">GitHub Username:</label>
+            <input type="text" name="githubusername" class="form-control" id="id_githubusername" value="{{ form.githubusername.value }}">
+          </div>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_skills">Skills:</label>
+            <ul class="list-group">
+                {% for skill in form.skills.field.choices %}
+                    <li class="list-group-item d-flex justify-content-between align-items-center">
+                        <input type="checkbox" name="skills" value="{{ skill.0 }}" {% if skill.0 in form.initial.skills %}checked{% endif %} class="form-check-input me-2">
+                        {{ skill.1 }}
+                    </li>
+                {% endfor %}
+            </ul>
+        </div>
+
+        <div class="mb-3">
+            <label for="id_bio" class="form-label">Bio:</label>
+            <textarea name="bio" class="form-control" id="id_bio">{{ form.bio.value }}</textarea>
+        </div>
+            <button type="submit" class="btn btn-primary">Update Profile</button>
         </form>
     </div>
-  </div>
 </div>
 {% endblock content %}
 

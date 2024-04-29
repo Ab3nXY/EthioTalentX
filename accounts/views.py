@@ -5,6 +5,7 @@ from .forms import ProfileForm, ExperienceForm, EducationForm, ExperienceFormSet
 from .models import Profile, Skill, Education, Experience
 from django.forms import formset_factory
 from django.shortcuts import get_object_or_404
+from django.contrib.auth.models import User
 
 # Create your views here.
 def index(request):
@@ -18,10 +19,10 @@ def profile(request):
         profile = None
 
     if request.method == 'POST':
-        form = ProfileForm(user=request.user, data=request.POST, files=request.FILES, instance=profile)
+        form = ProfileForm(data=request.POST, files=request.FILES, instance=profile)
         if form.is_valid():
             profile = form.save(commit=False)
-            skill_names = form.cleaned_data.get('skills')  # Retrieve selected skill names from the form
+            skill_names = form.cleaned_data.get('skills', [])  # Retrieve selected skill names from the form
             skills = []
             # Verify skill existence and add them to the profile
             for name in skill_names:
@@ -29,12 +30,19 @@ def profile(request):
                 skills.append(skill)
             profile.skills.set(skills)  # Set the skills for the profile
             profile.save()
+            print("Redirecting to the dashboard...")
             return redirect('dashboard')
+        else:
+            # Debugging: Print form errors to identify any validation issues
+            print(form.errors)
     else:
-        form = ProfileForm(user=request.user, instance=profile)
+        initial_skills = [skill.name for skill in profile.skills.all()] if profile else []
+        form = ProfileForm(instance=profile, initial={'skills': initial_skills})
 
     context = {'profile': profile, 'form': form}
     return render(request, 'account/profile.html', context)
+
+
 
 def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk)

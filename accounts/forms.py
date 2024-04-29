@@ -12,45 +12,22 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        fields = '__all__'
+        exclude = ['user']  # Exclude the user field from the form
 
-
-    def __init__(self, user=None, *args, **kwargs):
-        self.user = user
+    def __init__(self, *args, **kwargs):
         super(ProfileForm, self).__init__(*args, **kwargs)
-        self.fields['user'].initial = self.user.username
         self.helper = FormHelper()
-        self.helper.layout = Layout(
-            Fieldset(
-                Row(
-                    Column('user', css_class='col-md-6'),
-                    Column('occupation', css_class='col-md-6'),
-                ),
-                Row(
-                    Column('location', css_class='col-md-6'),
-                    Column('company', css_class='col-md-6'),
-                ),
-                Row(
-                    Column('website', css_class='col-md-6'),
-                    Column('image', css_class='col-md-6'),  # Include image field
-                ),
-                'bio',
-                'skills',
-                Row(
-                    Column('githubusername', css_class='col-md-6'),
-                ),
-            ),
-            'social',
-            'date',
-            Submit('submit', 'Update Profile', css_class='btn btn-primary'),
-        )
 
-    def clean_user(self):
-        return self.user  # Make sure the user field retains the current user's value
-
-    def save(self, commit=True):
+    def save(self, user=None, commit=True):
         profile = super().save(commit=False)
         if commit:
+            if user:
+                # Update user-related fields if provided
+                if self.cleaned_data['first_name'] != user.first_name:
+                    user.first_name = self.cleaned_data['first_name']
+                if self.cleaned_data['last_name'] != user.last_name:
+                    user.last_name = self.cleaned_data['last_name']
+                user.save()
             profile.save()
             self.save_m2m()
         return profile
