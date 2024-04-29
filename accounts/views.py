@@ -1,8 +1,9 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .forms import ProfileForm
+from .forms import ProfileForm, ExperienceForm, EducationForm, ExperienceFormSet
 from .models import Profile, Skill, Education, Experience
+from django.forms import formset_factory
 
 # Create your views here.
 def index(request):
@@ -40,12 +41,65 @@ def dashboard(request):
   return render(request, 'account/dashboard.html')
 
 def profiles(request):
-  return render(request, 'account/profiles.html')
+    """
+    Renders a list of profiles.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: A rendered HTML response containing the list of profiles.
+    """
+
+    profiles = Profile.objects.all()  # Fetch all profiles
+    context = {'profiles': profiles}
+    return render(request, 'account/profiles.html', context)
 
 @login_required
 def add_experience(request):
-  return render(request, 'account/add_experience.html')
+    """
+    Renders a form for users to create or edit experience data.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: A rendered HTML response containing the form.
+    """
+
+    if request.method == 'POST':
+        formset = ExperienceFormSet(request.POST)
+        if formset.is_valid():
+            # Process valid formset data here (save to database, etc.)
+            for form in formset:
+                form.save(user=request.user)  # Pass the current user to the save method
+            return render(request, 'experience_success.html', {'message': 'Experience(s) saved successfully!'})
+    else:
+        formset = ExperienceFormSet()
+
+    context = {'formset': formset}
+    return render(request, 'account/add_experience.html', context)
 
 @login_required
 def add_education(request):
-  return render(request, 'account/add_education.html')
+    """
+    Renders a form for users to create or edit education data.
+
+    Args:
+        request (HttpRequest): The incoming HTTP request.
+
+    Returns:
+        HttpResponse: A rendered HTML response containing the form.
+    """
+
+    if request.method == 'POST':
+        form = EducationForm(request.POST)
+        if form.is_valid():
+            # Process valid form data here (save to database, etc.)
+            form.save()  # Assuming you want to save the form data
+            return render(request, 'education_success.html', {'message': 'Education saved successfully!'})
+    else:
+        form = EducationForm()
+
+    context = {'form': form}
+    return render(request, 'account/add_education.html', context)

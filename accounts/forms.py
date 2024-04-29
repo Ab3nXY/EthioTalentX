@@ -2,6 +2,8 @@ from django import forms
 from .models import Profile, Experience, Education, OCCUPATION_CHOICES, SKILLS_CHOICES, Skill
 from crispy_forms.helper import FormHelper
 from crispy_forms.layout import Layout, Fieldset, Row, Column, Submit
+from django.contrib.auth.models import User
+from django.forms import formset_factory
 
 class ProfileForm(forms.ModelForm):
     occupation = forms.ChoiceField(choices=OCCUPATION_CHOICES, initial='developer', widget=forms.Select(attrs={'class': 'form-select'}))
@@ -56,7 +58,33 @@ class ProfileForm(forms.ModelForm):
 class ExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
-        fields = '__all__'
+        fields = ['title', 'company', 'location', 'description', 'from_date', 'to_date']
+
+        widgets = {
+            'start_date': forms.SelectDateWidget(),
+            'end_date': forms.SelectDateWidget(),
+        }
+
+    def __init__(self, *args, **kwargs):
+        super(ExperienceForm, self).__init__(*args, **kwargs)
+        self.fields['from_date'].label = "Start Date"
+        self.fields['to_date'].label = "End Date"
+
+
+
+        # Add custom styling using crispy forms or HTML classes
+        self.helper = FormHelper()
+        self.helper.form_method = 'post'
+        self.helper.layout = Layout(
+            'title',
+            'company',
+            'location',
+            'description',
+            'from_date',
+            'to_date',
+        )
+
+ExperienceFormSet = formset_factory(ExperienceForm, extra=1)
 
 class EducationForm(forms.ModelForm):
     class Meta:

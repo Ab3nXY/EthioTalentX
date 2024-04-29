@@ -100,3 +100,26 @@ body {
     column-count: 4; /* Set the number of columns */
     column-gap: 20px; /* Adjust the gap between columns */
 }
+
+/* profiles */
+.card {
+    border-style: none;
+    background-color: rgb(238, 238, 238); /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    margin-top: 20px;
+    margin-right: 100px;
+  }
+  
+  .card-body {
+    padding: 20px; /* Increased padding */
+  }
+  
+  .card-title {
+    font-size: 18px; /* Adjust font size */
+    font-weight: bold; /* Bold title */
+  }
+  
+  .card-text {
+    color: #333; /* Darker text color */
+  }
+  
