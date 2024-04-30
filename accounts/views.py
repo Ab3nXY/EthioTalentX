@@ -1,11 +1,13 @@
 from django.shortcuts import render, redirect
 from django.contrib.auth.decorators import login_required
 
-from .forms import ProfileForm, ExperienceForm, EducationForm, ExperienceFormSet
+from .forms import ProfileForm, ExperienceForm, EducationForm
 from .models import Profile, Skill, Education, Experience
-from django.forms import formset_factory
 from django.shortcuts import get_object_or_404
-from django.contrib.auth.models import User
+from django.views.generic import CreateView, DeleteView, UpdateView
+from django.utils.decorators import method_decorator
+from django.urls import reverse_lazy
+
 
 # Create your views here.
 def index(request):
@@ -66,30 +68,38 @@ def profiles(request):
     context = {'profiles': profiles}
     return render(request, 'account/profiles.html', context)
 
-@login_required
-def add_experience(request):
-    """
-    Renders a form for users to create or edit experience data.
+@method_decorator(login_required, name='dispatch')
+class ExperienceCreateView(CreateView):
+    model = Experience
+    form_class = ExperienceForm
+    template_name = 'account/add_experience.html'
+    success_message = 'Experience created successfully!'
 
-    Args:
-        request (HttpRequest): The incoming HTTP request.
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        user = self.request.user
+        kwargs['initial'] = {'profile': user.profile}
+        return kwargs
 
-    Returns:
-        HttpResponse: A rendered HTML response containing the form.
-    """
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['experiences'] = Experience.objects.filter(profile=self.request.user.profile)
+        return context
 
-    if request.method == 'POST':
-        formset = ExperienceFormSet(request.POST)
-        if formset.is_valid():
-            # Process valid formset data here (save to database, etc.)
-            for form in formset:
-                form.save(user=request.user)  # Pass the current user to the save method
-            return render(request, 'experience_success.html', {'message': 'Experience(s) saved successfully!'})
-    else:
-        formset = ExperienceFormSet()
+    def get_success_url(self):
+        return reverse_lazy('add_experience')
+    
+@method_decorator(login_required, name='dispatch')
+class ExperienceDeleteView(DeleteView):
+    model = Experience
+    success_url = reverse_lazy('add_experience')
 
-    context = {'formset': formset}
-    return render(request, 'account/add_experience.html', context)
+@method_decorator(login_required, name='dispatch')
+class ExperienceUpdateView(UpdateView):
+    model = Experience
+    form_class = ExperienceForm
+    template_name = 'account/add_experience.html'
+    success_url = reverse_lazy('add_experience')
 
 @login_required
 def add_education(request):

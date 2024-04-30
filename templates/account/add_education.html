@@ -14,14 +14,17 @@
 {% block content %}
 <div class="container mt-5"  style="padding-left: 60px;">
   <div class="row align-items-center">
-    <div class="col-md-8">
-      <h2>Manage Your Profile</h2>
-    </div>
-    <div class="col-md-4 d-flex justify-content-end">
-      <a href="{% url 'profile' %}" class="btn btn-primary me-2"><i class="fas fa-user-edit"></i> Edit Profile</a>
-      <a href="{% url 'add_experience' %}" class="btn btn-success me-2"><i class="fas fa-briefcase"></i> Add Experience</a>
-      <a href="{% url 'add_education' %}" class="btn btn-info"><i class="fas fa-graduation-cap"></i> Add Education</a>
-    </div>
+    <div class="col-md-8 d-flex">
+      <a href="{% url 'profile' %}" class="btn btn-secondary me-2" id="profile-btn">
+        <i class="fas fa-user-edit"></i> Edit Profile
+    </a>
+    <a href="{% url 'add_education' %}" class="btn btn-secondary me-2" id="education-btn">
+      <i class="fas fa-graduation-cap"></i> Add Education
+  </a>
+    <a href="{% url 'add_experience' %}" class="btn btn-secondary me-2" id="experience-btn">
+        <i class="fas fa-briefcase"></i> Add Experience
+    </a>
+  </div>
   </div>
 
   <div class="row mt-4">
@@ -37,5 +40,40 @@
 {% endblock content %}
 
 {% block extrascripts %}
+<script>
+document.addEventListener('DOMContentLoaded', function() {
+    // Get the current URL path
+    var currentPath = window.location.pathname;
 
+    // Get all the buttons
+    var buttons = document.querySelectorAll('.btn-secondary');
+
+    // Loop through each button
+    buttons.forEach(function(button) {
+        // Check if the button's href matches the current URL path
+        if (button.getAttribute('href') === currentPath) {
+            // Add active class to the button
+            button.classList.add('active');
+        }
+
+        // Add click event listener to each button
+        button.addEventListener('click', function(event) {
+            // Prevent the default behavior of the anchor tag
+            event.preventDefault();
+
+            // Remove active class from all buttons
+            buttons.forEach(function(btn) {
+                btn.classList.remove('active');
+            });
+
+            // Add active class to the clicked button
+            button.classList.add('active');
+
+            // Redirect to the button's href
+            window.location.href = button.getAttribute('href');
+        });
+    });
+});
+
+</script>
 {% endblock extrascripts %}

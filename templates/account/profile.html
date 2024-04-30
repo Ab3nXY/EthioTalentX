@@ -14,130 +14,133 @@
 {% block content %}
 <div class="container mt-5"  style="padding-left: 60px;">
   <div class="row align-items-center">
-    <div class="col-md-8">
-      <h2>Manage Your Profile</h2>
-    </div>
-    <div class="col-md-4 d-flex justify-content-end">
-      <a href="{% url 'profile' %}" class="btn btn-primary me-2"><i class="fas fa-user-edit"></i> Edit Profile</a>
-      <a href="{% url 'add_experience' %}" class="btn btn-success me-2"><i class="fas fa-briefcase"></i> Add Experience</a>
-      <a href="{% url 'add_education' %}" class="btn btn-info"><i class="fas fa-graduation-cap"></i> Add Education</a>
+    <div class="col-md-8 d-flex">
+        <a href="{% url 'profile' %}" class="btn btn-secondary me-2" id="profile-btn">
+            <i class="fas fa-user-edit"></i> Edit Profile
+        </a>
+        <a href="{% url 'add_education' %}" class="btn btn-secondary me-2" id="education-btn">
+            <i class="fas fa-graduation-cap"></i> Add Education
+        </a>
+        <a href="{% url 'add_experience' %}" class="btn btn-secondary me-2" id="experience-btn">
+            <i class="fas fa-briefcase"></i> Add Experience
+        </a>
     </div>
   </div>
 
-<!-- The profile form -->
-<div class="row mt-4" style="color: grey;">
-    <div class="col-md-12">   
-        
-        <div class="section-divider mb-2 px-2 ">
-           <p> Person Information</p>
-        </div>
-    <small class="form-text text-muted">* Fields are required.</small>
-    <form method="post" enctype="multipart/form-data">
-        {% csrf_token %}
-        <div class="row">
-            <div class="col-md-6 mb-3">
-                <label for="id_username" class="form-label">Username:*</label>
-                <input type="text" name="username" class="form-control" id="id_username" value="{{ user.username }}" readonly>
-                {% if form.errors.username %}
-                    <div class="invalid-feedback">{{ form.errors.username }}</div>
-                {% endif %}
-              </div>
-              <div class="col-md-6 mb-3">
-                <div class="d-flex align-items-center">
-                    <div class="rounded-circle overflow-hidden me-3" style="width: 80px; height: 80px;">
-                        <img id="preview" src="{{ profile.image.url }}" alt="Profile Image" style="width: 100%; height: 100%; object-fit: cover;">
-                    </div>
-                    <label for="id_image" class="btn btn-secondary">Change Profile Picture</label>
-                    <input type="file" name="image" class="form-control visually-hidden" id="id_image" onchange="previewImage(event)">
-                </div>
+    <!-- The profile form -->
+    <div class="row mt-4" style="color: grey;">
+        <div class="col-md-12">   
+            
+            <div class="section-divider mb-2 px-2 ">
+            <p> Person Information</p>
             </div>
-            <div class="col-md-6 mb-3">
-                <label for="id_email" class="form-label">Email:*</label>
-                <input type="text" name="email" class="form-control" id="id_email" value="{{ user.email }}" readonly>
-                {% if form.errors.email %}
-                    <div class="invalid-feedback">{{ form.errors.email }}</div>
-                {% endif %}
-                </div>
-            <div class="col-md-6 mb-3">
-                <label for="id_first_name" class="form-label">First Name:</label>
-                <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ user.first_name }}">
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="id_last_name" class="form-label">Last Name:</label>
-                <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ user.last_name }}">
-            </div>
-            <div class="col-md-6 mb-3">
-                <label for="id_location" class="form-label">Location:</label>
-                <input type="text" name="location" class="form-control" id="id_location" value="{{ form.location.value }}">
-              </div>
-        </div>
-
-        <div class="section-divider mt-4 mb-4 px-2 ">
-            <p> Profile Information</p>
-         </div>
-
-        <div class="row">
-        <div class="col-md-6 mb-3">
-            <label for="id_occupation" class="form-label">Occupation:*</label>
-            <select name="occupation" id="id_occupation" class="form-select">
-                {% for choice in form.occupation.field.choices %}
-                <option value="{{ choice.0 }}" {% if choice.0 == form.occupation.value %}selected{% endif %}>{{ choice.1 }}</option>
-                {% endfor %}
-            </select>
-            {% if form.errors.occupation %}
-                <div class="invalid-feedback">{{ form.errors.occupation }}</div>
-            {% endif %}
-        </div>
-          <div class="col-md-6 mb-3">
-            <label for="id_company" class="form-label">Company:</label>
-            <input type="text" name="company" class="form-control" id="id_company" value="{{ form.company.value }}">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="id_website" class="form-label">Website:</label>
-            <input type="url" name="website" class="form-control" id="id_website" value="{{ form.website.value }}">
-          </div>
-          <div class="col-md-6 mb-3">
-            <label for="id_githubusername" class="form-label">GitHub Username:</label>
-            <input type="text" name="githubusername" class="form-control" id="id_githubusername" value="{{ form.githubusername.value }}">
-          </div>
-        </div>
-        <div class="section-divider mt-4 px-2 ">
-            <p> Skills</p>
-         </div>
-
-        <div class="mb-3 border">
-            <label for="id_website" class="form-label me-2">Skills:*</label>
-            <span class="text-muted small">Choose one or more skills</span>
+        <small class="form-text text-muted">* Fields are required.</small>
+        <form method="post" enctype="multipart/form-data">
+            {% csrf_token %}
             <div class="row">
-                {% for skill in form.skills.field.choices %}
-                    <div class="col-sm-3" style="color: green;">
-                        <label class="form-check">
-                            <input type="checkbox" name="skills" value="{{ skill.0 }}" {% if skill.0 in form.initial.skills %}checked{% endif %} class="form-check-input me-2">
-                            {{ skill.1 }}
-                        </label>
-                    </div>
-                    {% if forloop.counter|divisibleby:10 or forloop.last %}
-                        </div>{% if not forloop.last %}<div class="row">{% endif %}
+                <div class="col-md-6 mb-3">
+                    <label for="id_username" class="form-label">Username:*</label>
+                    <input type="text" name="username" class="form-control" id="id_username" value="{{ user.username }}" readonly>
+                    {% if form.errors.username %}
+                        <div class="invalid-feedback">{{ form.errors.username }}</div>
                     {% endif %}
-                {% endfor %}
+                </div>
+                <div class="col-md-6 mb-3">
+                    <div class="d-flex align-items-center">
+                        <div class="rounded-circle overflow-hidden me-3" style="width: 80px; height: 80px;">
+                            <img id="preview" src="{{ profile.image.url }}" alt="Profile Image" style="width: 100%; height: 100%; object-fit: cover;">
+                        </div>
+                        <label for="id_image" class="btn btn-primary">Profile Picture</label>
+                        <input type="file" name="image" class="form-control visually-hidden" id="id_image" onchange="previewImage(event)">
+                    </div>
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_email" class="form-label">Email:*</label>
+                    <input type="text" name="email" class="form-control" id="id_email" value="{{ user.email }}" readonly>
+                    {% if form.errors.email %}
+                        <div class="invalid-feedback">{{ form.errors.email }}</div>
+                    {% endif %}
+                    </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_first_name" class="form-label">First Name:</label>
+                    <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ user.first_name }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_last_name" class="form-label">Last Name:</label>
+                    <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ user.last_name }}">
+                </div>
+                <div class="col-md-6 mb-3">
+                    <label for="id_location" class="form-label">Location:</label>
+                    <input type="text" name="location" class="form-control" id="id_location" value="{{ form.location.value }}">
+                </div>
             </div>
-            {% if form.errors.skills %}
-                <div class="invalid-feedback d-block">{{ form.errors.skills }}</div>
-            {% endif %}
-        </div>
-        
 
-        <div class="mb-3">
-            <label for="id_bio" class="form-label">Bio:</label>
-            <textarea name="bio" class="form-control" id="id_bio">{{ form.bio.value }}</textarea>
-        </div>
-        <div class="row">
+            <div class="section-divider mt-4 mb-4 px-2 ">
+                <p> Profile Information</p>
+            </div>
+
+            <div class="row">
             <div class="col-md-6 mb-3">
-            <button type="submit" class="btn btn-primary">Update Profile</button>
+                <label for="id_occupation" class="form-label">Occupation:*</label>
+                <select name="occupation" id="id_occupation" class="form-select">
+                    {% for choice in form.occupation.field.choices %}
+                    <option value="{{ choice.0 }}" {% if choice.0 == form.occupation.value %}selected{% endif %}>{{ choice.1 }}</option>
+                    {% endfor %}
+                </select>
+                {% if form.errors.occupation %}
+                    <div class="invalid-feedback">{{ form.errors.occupation }}</div>
+                {% endif %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_company" class="form-label">Company:</label>
+                <input type="text" name="company" class="form-control" id="id_company" value="{{ form.company.value }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_website" class="form-label">Website:</label>
+                <input type="url" name="website" class="form-control" id="id_website" value="{{ form.website.value }}">
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_githubusername" class="form-label">GitHub Username:</label>
+                <input type="text" name="githubusername" class="form-control" id="id_githubusername" value="{{ form.githubusername.value }}">
+            </div>
+            </div>
+            <div class="section-divider mt-4 px-2 ">
+                <p> Skills</p>
+            </div>
+
+            <div class="mb-3 border">
+                <label for="id_website" class="form-label me-2">Skills:*</label>
+                <span class="text-muted small">Choose one or more skills</span>
+                <div class="row">
+                    {% for skill in form.skills.field.choices %}
+                        <div class="col-sm-3" style="color: green;">
+                            <label class="form-check">
+                                <input type="checkbox" name="skills" value="{{ skill.0 }}" {% if skill.0 in form.initial.skills %}checked{% endif %} class="form-check-input me-2">
+                                {{ skill.1 }}
+                            </label>
+                        </div>
+                        {% if forloop.counter|divisibleby:10 or forloop.last %}
+                            </div>{% if not forloop.last %}<div class="row">{% endif %}
+                        {% endif %}
+                    {% endfor %}
+                </div>
+                {% if form.errors.skills %}
+                    <div class="invalid-feedback d-block">{{ form.errors.skills }}</div>
+                {% endif %}
+            </div>
+            
+
+            <div class="mb-3">
+                <label for="id_bio" class="form-label">Bio:</label>
+                <textarea name="bio" class="form-control" id="id_bio">{{ form.bio.value }}</textarea>
+            </div>
+            <div class="row">
+                <div class="col-md-6 mb-3">
+                <button type="submit" class="btn btn-primary">Update Profile</button>
+            </div>
         </div>
-    </div>
-    </form>
-    </div>
+        </form>
+        </div>
 </div>
 {% endblock content %}
 
@@ -151,6 +154,42 @@
         }
         reader.readAsDataURL(event.target.files[0]);
     }
+
+        document.addEventListener('DOMContentLoaded', function() {
+        // Get the current URL path
+        var currentPath = window.location.pathname;
+
+        // Get all the buttons
+        var buttons = document.querySelectorAll('.btn-secondary');
+
+        // Loop through each button
+        buttons.forEach(function(button) {
+            // Check if the button's href matches the current URL path
+            if (button.getAttribute('href') === currentPath) {
+                // Add active class to the button
+                button.classList.add('active');
+            }
+
+            // Add click event listener to each button
+            button.addEventListener('click', function(event) {
+                // Prevent the default behavior of the anchor tag
+                event.preventDefault();
+
+                // Remove active class from all buttons
+                buttons.forEach(function(btn) {
+                    btn.classList.remove('active');
+                });
+
+                // Add active class to the clicked button
+                button.classList.add('active');
+
+                // Redirect to the button's href
+                window.location.href = button.getAttribute('href');
+            });
+        });
+    });
+
+
 </script>
 
 {% endblock extrascripts %}
