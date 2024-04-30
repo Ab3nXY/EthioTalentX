@@ -33,15 +33,15 @@
 
 body {
     padding-top: 60px; /* Adjust the value to match the height of your navbar */
+    
 }
 
 /* Ensure background covers the entire screen */
 
 .navbar-brand {
     color: white;
-    font-size: 25px;
+    font-size: 30px;
     margin-left: 50px;
-    font-weight: bold;  /* Adjust brand name color */
 }
 
 .nav-link {
@@ -62,6 +62,7 @@ body {
     top: 0;
     width: 100%; /* Ensure the navbar spans the full width of the viewport */
     height: 60px;
+    z-index: 1020;
 }
 
 /* Sidebar Styles */
@@ -100,3 +101,50 @@ body {
     column-count: 4; /* Set the number of columns */
     column-gap: 20px; /* Adjust the gap between columns */
 }
+
+/* profiles */
+.card {
+    border-style: none;
+    background-color: rgb(238, 238, 238); /* Light background color */
+    border-radius: 10px; /* Rounded corners */
+    margin-top: 20px;
+    margin-right: 100px;
+  }
+  
+  .card-body {
+    padding: 20px; /* Increased padding */
+  }
+  
+  .card-title {
+    font-size: 18px; /* Adjust font size */
+    font-weight: bold; /* Bold title */
+  }
+  
+  .card-text {
+    color: #333; /* Darker text color */
+  }
+  
+  .section-divider {
+    font-size: 25px;
+    background-color: rgb(220, 220, 220);
+    height: 50px;
+    text-align: center;
+  }
+
+footer {
+    margin-top: auto;
+    position: relative;
+    bottom: 0;
+    width: 100%;
+    font-size: small;
+    opacity: 0.5;
+    display: flex;
+    justify-content: flex-end;
+  }
+
+.btn-secondary:hover,
+.btn-secondary.active {
+    background-color: #242323; /* Change to desired hover/active color */
+    color: #fff; /* Change to desired text color */
+}
+
