@@ -12,41 +12,53 @@
 {% endblock BG %}
 
 {% block content %}
-<div class="container d-flex flex-column">
+<div class="container" style="padding-left: 60px;">
   <h1 class="display-4 fw-bold" style="color: skyblue;">Developers</h1>
   <h2 class="lead"><i class="fa-brands fa-connectdevelop fa-lg me-2"></i>Connect with Top Talent: Browse Our Developer Network!</h2>
 </div>
 
-  <div class="container d-flex justify-content-center px-4">  
-    <div class="card row-cols-md-3 g-5">  
-      {% for profile in profiles %}
-          <div class="col profile-card h-100 d-flex flex-md-row align-items-center rounded">  
-            <div class="col-md-8 profile-image-container" style="margin: 20px;">
-              <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" alt="Profile Image">
-            </div>
-            <div class="col-md-12 profile-info d-flex flex-column justify-content-between px-4 py-3">  
-              <h5 class="card-title ">{{ profile.user.first_name }}</h5>
-              <p class="card-text mb-3">{{ profile.occupation}}</p> 
-              <div class="col-md-8 py-3">
-                <a href="{% url 'profile_detail' pk=profile.pk %}" class="btn btn-primary" style="display: inline-block;">View Profile</a>
-              </div>
-            </div>
-            <div class="col-md-12 profile-skills list-group list-group-flush"> 
-              <div class="row">
-              {% for skill in profile.skills.all %}
-                  <div class="col-md-6">
-                      <li class="list-group-item d-flex justify-content-start align-items-center px-0" style="color: green; background-color: rgb(238, 238, 238); border-style: none;">
-                          <i class="fas fa-check" style="margin-right: 10px;"></i> 
-                          {{ skill.name }}
-                      </li>
-                  </div>
-              {% endfor %}
-            </div> 
+<div class="container " style="padding-left: 60px;">
+  {% for profile in profiles %}  
+  <div class="card row-cols-md-3 row-cols-sm-1 g-5">  
+    <div class="col card flex-md-row align-items-center rounded {% if forloop.first %}card{% endif %}">
+
+          <div class="col-md-8 col-12 profile-image-container" style="margin: 10px;">
+            <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" alt="Profile Image">
           </div>
-        </div>
-      {% endfor %}
+
+          <div class="col-md-12 profile-info d-flex flex-column px-4 py-3">  
+            <h5 class="card-title ">{{ profile.user.first_name }}</h5>
+            <p class="card-text mb-3">{{ profile.occupation}}</p> 
+            <div class="col-md-8 py-3">
+              <a href="{% url 'profile_detail' pk=profile.pk %}" class="btn btn-primary" style="display: inline-block;">View Profile</a>
+            </div>
+          </div>
+
+          <div class="col-md-12 profile-skills list-group list-group-flush"> 
+            <div class="row">
+            {% for skill in profile.skills.all %}
+                <div class="col-md-4 col-6">
+                    <li class="list-group-item d-flex justify-content-start align-items-center px-0" style="color: green; background-color: rgb(238, 238, 238); border-style: none;">
+                        <i class="fas fa-check" style="margin-right: 10px;"></i> 
+                        {{ skill.name }}
+                    </li>
+                </div>
+            {% endfor %}
+            </div>
+          </div>
+
+          {% if not forloop.last %}
+            <div class="empty-space"></div>
+          {% endif %}
+
     </div>
   </div>
+
+    {% endfor %}
+  
+</div>
+
+
 {% endblock content %}
 
 {% block extrascripts %}

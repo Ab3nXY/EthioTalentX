@@ -62,7 +62,7 @@ class Profile(models.Model):
     bio = models.TextField(blank=True, null=True)
     githubusername = models.CharField(max_length=100, blank=True, null=True)
     date = models.DateTimeField(auto_now_add=True)
-    image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics')
+    image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics', blank=True)
     occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=False, null=True)
     skills = models.ManyToManyField('Skill', related_name='profiles', blank=False)
 

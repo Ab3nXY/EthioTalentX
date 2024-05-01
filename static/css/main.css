@@ -118,7 +118,7 @@ body {
     background-color: rgb(238, 238, 238); /* Light background color */
     border-radius: 10px; /* Rounded corners */
     margin-top: 20px;
-    margin-right: 100px;
+    margin-right: 300px;
   }
   
   .card-body {
@@ -132,6 +132,11 @@ body {
   
   .card-text {
     color: #333; /* Darker text color */
+  }
+  
+  .col.d-flex.flex-md-row.align-items-center.rounded {
+    margin-bottom: 20px; /* Add desired spacing between profiles */
+    color: white;
   }
   
   .section-divider {
@@ -174,3 +179,20 @@ footer {
     background-color: #343a40; /* Highlight/selected day background */
   }
   
+  @media (max-width: 768px) {
+    .container {
+      width: 100%; /* Make container full width on mobile */
+      padding: 20px; /* Add some padding for mobile layout */
+    }
+    .card {
+        border-style: none;
+        background-color: rgb(238, 238, 238); /* Light background color */
+        border-radius: 10px; /* Rounded corners */
+        margin-top: 5px;
+        margin-right: 15px;
+      }
+
+    h1, h2 {
+      font-size: 1.5rem; /* Adjust heading sizes for mobile readability */
+    }
+  }
