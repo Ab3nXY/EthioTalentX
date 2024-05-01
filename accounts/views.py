@@ -89,6 +89,11 @@ class ExperienceCreateView(CreateView):
     def get_success_url(self):
         return reverse_lazy('add_experience')
     
+    def form_valid(self, form):
+        form.instance.profile = self.request.user.profile
+        print("Form is valid and ready to be saved!")
+        return super().form_valid(form)
+    
 @method_decorator(login_required, name='dispatch')
 class ExperienceDeleteView(DeleteView):
     model = Experience

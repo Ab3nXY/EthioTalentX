@@ -14,10 +14,11 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
     <link rel="stylesheet" href="{% static 'css/fontawesome-free-6.5.2-web/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'js/bootstrap.bundle.min.js' %}">
-    <link rel="stylesheet" href="{% static 'js/jquery-3.6.0.min.js' %}">
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
-    <link rel="stylesheet" href="{% static 'js/jquery-3.6.0.min.js' %}">
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">    
+    <script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/jquery-3.6.0.min.js' %}" type="text/javascript"></script>
+    <script src="{% static 'js/bootstrap-datepicker.min.js' %}" type="text/javascript"></script>
+
 
     <!-- Favicon-->
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/android-chrome-192x192.png' %}">
@@ -26,36 +27,42 @@
 <body>
     {% block BG %}{% endblock BG %}
     </div>
-        <nav class="navbar navbar-expand-lg navbar-dark border-bottom border-1 border-secondary">
-            <div class="container-fluid">
-                <a class="navbar-brand" href="/">
-                    <i class="fa-solid fa-network-wired me-2"></i>EthioTalentX
-                </a>
-                <button class="navbar-toggler" type="button" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
-                    <span class="navbar-toggler-icon"></span>
-                </button>
-                <div class="collapse navbar-collapse" id="navbarSupportedContent">
-                    <ul class="navbar-nav ms-auto mb-lg-0">
-                        <li class="nav-item">
-                            <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2" style="color: blue;"></i>Talent Hub</a>
-                        </li>
-                        {% if user.is_authenticated %}
-                            <li class="nav-item">
-                                <a class="nav-link me-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3" style="color: red;"></i>Logout</a>
-                            </li>
-                        {% else %}
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
-                            </li>
-                            <li class="nav-item">
-                                <a class="nav-link" href="{% url 'account_login' %}">Login</a>
-                            </li>
-                        {% endif %}
-                    </ul>
-                    
-                </div>
+    <nav class="navbar navbar-expand-lg navbar-dark bg-dark border-bottom border-1 border-secondary">
+        <div class="container-fluid">
+            {% if user.is_authenticated %}
+            <a class="navbar-brand" href="{% url 'dashboard' %}">
+                <i class="fa-solid fa-network-wired me-2"></i>EthioTalentX
+            </a>
+            {% else %}
+            <a class="navbar-brand" href="/">
+                <i class="fa-solid fa-network-wired me-2"></i>EthioTalentX
+            </a>
+            {% endif %}
+            <button class="navbar-toggler" style="border-style: none; position: absolute; top: 10px; right: 10px;" data-bs-toggle="collapse" data-bs-target="#navbarSupportedContent" aria-controls="navbarSupportedContent" aria-expanded="false" aria-label="Toggle navigation">
+                <span class="navbar-toggler-icon"></span>
+            </button>
+            <div class="collapse navbar-collapse px-4 justify-content-end position-absolute" style="width: auto; right: 0;" id="navbarSupportedContent">
+                <ul class="navbar-nav ms-auto mb-lg-0">
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2" style="color: skyblue;"></i>Talent Hub</a>
+                    </li>
+                    {% if user.is_authenticated %}
+                    <li class="nav-item">
+                        <a class="nav-link me-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3" style="color: rgb(247, 178, 178);"></i>Logout</a>
+                    </li>
+                    {% else %}
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
+                    </li>
+                    <li class="nav-item">
+                        <a class="nav-link" href="{% url 'account_login' %}">Login</a>
+                    </li>
+                    {% endif %}
+                </ul>
             </div>
-        </nav>
+        </div>
+    </nav>
+    
 {% if user.is_authenticated %}
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
@@ -86,11 +93,27 @@
     {% endif %}
     {% block content %}
     {% endblock content %}
-
+    <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          const navbarToggler = document.querySelector(".navbar-toggler");
+          const navbarCollapse = document.querySelector(".navbar-collapse");
+      
+          navbarToggler.addEventListener("click", function() {
+            navbarCollapse.classList.toggle("expanded");
+          });
+      
+          // Detect window resize and remove 'expanded' class from navbar collapse
+          window.addEventListener("resize", function() {
+            if (window.innerWidth >= 992) {
+              navbarCollapse.classList.remove("expanded");
+            }
+          });
+        });
+      </script>
+      
     {% block extrascripts %}
     {% endblock extrascripts %}
 </body>
-
 <footer class="footer justify-content-end">
       <span class="text-muted">&copy; Copyright 2024 Created by Ab3nXY</span>
 </footer>
