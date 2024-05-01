@@ -61,20 +61,22 @@
   </div>
     
       <!-- Add experience -->
-      <div class="container px-4 py-4" id="experience-form-container" style="background-color: azure; border-radius: 10px; margin-top: 20px;">
+      <div class="row mt-4" style="color: grey;">
+        <div class="col-md-12">   
+        <small class="form-text text-muted">* Fields are required.</small>
         <form method="post" enctype="multipart/form-data">
             {% csrf_token %}
 
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="id_company" class="form-label">Company:</label>
+                    <label for="id_company" class="form-label">Company:*</label>
                     <input type="text" name="company" class="form-control" id="id_company">
                     {% for error in form.company.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
                     {% endfor %}
                 </div>
                 <div class="col-md-6 mb-3">
-                    <label for="id_title" class="form-label">Title:</label>
+                    <label for="id_title" class="form-label">Title:*</label>
                     <input type="text" name="title" class="form-control" id="id_title">
                     {% for error in form.title.errors %}
                         <div class="invalid-feedback">{{ error }}</div>
@@ -99,7 +101,7 @@
             </div>
             <div class="row">
                 <div class="col-md-6 mb-3">
-                    <label for="id_from_date" class="form-label">From Date:</label>
+                    <label for="id_from_date" class="form-label">From Date:*</label>
                     <input type="date" name="from_date" class="form-control" id="id_from_date" >
                     {% for error in form.from_date.errors %}
                         <div class="invalid-feedback">{{ error }}</div>

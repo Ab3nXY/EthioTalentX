@@ -23,7 +23,9 @@
     <div class="col card flex-md-row align-items-center rounded {% if forloop.first %}card{% endif %}">
 
           <div class="col-md-8 col-12 profile-image-container" style="margin: 10px;">
-            <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" alt="Profile Image">
+            <div href="{% url 'profile_detail' pk=profile.pk %}">
+              <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" alt="Profile Image">
+            </div>
           </div>
 
           <div class="col-md-12 profile-info d-flex flex-column px-4 py-3">  
