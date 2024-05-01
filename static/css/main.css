@@ -195,4 +195,17 @@ footer {
     h1, h2 {
       font-size: 1.5rem; /* Adjust heading sizes for mobile readability */
     }
+    .text-center {
+        font-size: x-small;
+        margin-top: 50px;
+    
+    }
+    .navbar-brand {
+        color: white;
+        font-size: large;
+        margin-left: 5px;
+    }
+    .Profile-button {
+        font-size: small;
+    }
   }
