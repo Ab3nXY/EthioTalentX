@@ -7,6 +7,8 @@ from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, DeleteView, UpdateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
+from django.contrib.auth.mixins import LoginRequiredMixin
+from django.http import JsonResponse
 
 
 # Create your views here.
@@ -68,8 +70,7 @@ def profiles(request):
     context = {'profiles': profiles}
     return render(request, 'account/profiles.html', context)
 
-@method_decorator(login_required, name='dispatch')
-class ExperienceCreateView(CreateView):
+class ExperienceCreateView(LoginRequiredMixin, CreateView):
     model = Experience
     form_class = ExperienceForm
     template_name = 'account/add_experience.html'
@@ -91,19 +92,29 @@ class ExperienceCreateView(CreateView):
     
     def form_valid(self, form):
         form.instance.profile = self.request.user.profile
-        print("Form is valid and ready to be saved!")
         return super().form_valid(form)
+
+class ExperienceUpdateView(LoginRequiredMixin, UpdateView):
+    model = Experience
+    form_class = ExperienceForm
+    template_name = 'account/add_experience.html'
+    success_message = 'Experience updated successfully!'
+
+    def form_valid(self, form):
+        form.instance.profile = self.request.user.profile
+        response = super().form_valid(form)
+        print("Form is valid and ready to be saved!")
+        if self.request.is_ajax():
+            print('JSON response:', {'success': True})
+            return JsonResponse({'success': True})
+        return response
+
+    def get_success_url(self):
+        return reverse_lazy('add_experience')
     
 @method_decorator(login_required, name='dispatch')
 class ExperienceDeleteView(DeleteView):
     model = Experience
-    success_url = reverse_lazy('add_experience')
-
-@method_decorator(login_required, name='dispatch')
-class ExperienceUpdateView(UpdateView):
-    model = Experience
-    form_class = ExperienceForm
-    template_name = 'account/add_experience.html'
     success_url = reverse_lazy('add_experience')
 
 @login_required

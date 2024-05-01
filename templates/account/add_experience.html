@@ -31,34 +31,118 @@
   <div class="row row-cols-1 row-cols-md-2 g-4">
     {% for experience in experiences %}
       <div class="col">
-        <div class="card shadow-sm">
-          <div class="card-body">
-            <h5 class="card-title">{{ experience.title }}</h5>
-            <p class="card-text">
-              <i class="fas fa-briefcase"></i> {{ experience.company }}<br>
-              {% if experience.location %}
-                <i class="fas fa-map-marker-alt"></i> {{ experience.location }}<br>
-              {% endif %}
-              <i class="fas fa-calendar-alt"></i> {{ experience.from_date }}{% if experience.to_date %} - {{ experience.to_date }}{% else %} (Present){% endif %}
-            </p>
-  
-            <div class="d-flex justify-content-between align-items-center">
-              <a href="#" class="btn btn-sm btn-outline-primary mb-2" onclick="editExperience({{ experience.id }})">Edit <i class="fas fa-edit"></i></a>
-  
-              <form method="post" action="{% url 'delete_experience' experience.pk %}">
+          <div class="card col-md-12 shadow-sm">
+            <div class="card-body ">
+
+              <h5 class="card-title">{{ experience.title }}</h5>
+              <p class="card-text">
+                <i class="fas fa-briefcase"></i> {{ experience.company }}<br>
+                {% if experience.location %}
+                  <i class="fas fa-map-marker-alt"></i> {{ experience.location }}<br>
+                {% endif %}
+                <i class="fas fa-calendar-alt"></i> {{ experience.from_date }}{% if experience.to_date %} - {{ experience.to_date }}{% else %} (Present){% endif %}
+              </p>
+              
+              
+              <div class="d-flex justify-content-between align-items-center">
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-sm btn-outline-primary mb-2 editButton" data-experience-id="{{ experience.pk }}" data-bs-toggle="modal" data-bs-target="#editModal">
+                      Edit <i class="fas fa-edit"></i>
+                    </button>
+                   
+
+                <form method="post" action="{% url 'delete_experience' experience.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger mt-auto">Delete <i class="fas fa-trash"></i></button>
+                </form>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      {% empty %}
+      <div class="col">
+          <p>No experiences added yet.</p>
+      </div>
+    {% endfor %}
+  </div>
+
+      <!-- Edit Experience Modal -->
+      <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
+        <div class="modal-dialog modal-dialog-centered">
+          <div class="modal-content">
+            <div class="modal-header">
+              <h5 class="modal-title" id="editModalLabel">Edit Experience</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+            </div>
+            <div class="modal-body">
+              <form id="editForm">
                 {% csrf_token %}
-                <button type="submit" class="btn btn-sm btn-outline-danger mt-auto">Delete <i class="fas fa-trash"></i></button>
+                <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label for="id_company" class="form-label">Company:*</label>
+                      <input type="text" name="company" class="form-control" id="id_company">
+                      {% for error in form.company.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="id_title" class="form-label">Title:*</label>
+                      <input type="text" name="title" class="form-control" id="id_title">
+                      {% for error in form.title.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label for="id_location" class="form-label">Location:</label>
+                      <input type="text" name="location" class="form-control" id="id_location">
+                      {% for error in form.location.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="id_description" class="form-label">Description:</label>
+                      <textarea name="description" class="form-control" id="id_description"></textarea>
+                      {% for error in form.description.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+              </div>
+              <div class="row">
+                  <div class="col-md-6 mb-3">
+                      <label for="id_from_date" class="form-label">From Date:*</label>
+                      <input type="date" name="from_date" class="form-control" id="id_from_date" >
+                      {% for error in form.from_date.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+                  <div class="col-md-6 mb-3">
+                      <label for="id_to_date" class="form-label">To Date:</label>
+                      <input type="date" name="to_date" class="form-control" id="id_to_date" >
+                      {% for error in form.to_date.errors %}
+                          <div class="invalid-feedback">{{ error }}</div>
+                      {% endfor %}
+                  </div>
+              </div>
+              <div class="row justify-content-end">
+                  <div class="col-md-6 mb-3">
+                      <label for="id_current" class="form-label">Current:</label>
+                      <input type="checkbox" name="current" class="form-check-input" id="id_current" {% if form.current.value %}checked{% endif %}>
+                  </div>
+              </div>
               </form>
+            </div>
+            <div class="modal-footer">
+              <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+              <button type="submit" form="editForm" class="btn btn-primary">Save changes</button>
             </div>
           </div>
         </div>
       </div>
-    {% empty %}
-      <div class="col">
-        <p>No experiences added yet.</p>
-      </div>
-    {% endfor %}
-  </div>
     
       <!-- Add experience -->
       <div class="row mt-4" style="color: grey;">
@@ -166,6 +250,55 @@
       });
   });
   // for button activation end
+
+  // Trigger to open modal and populate form fields
+  document.querySelectorAll('.editButton').forEach(function(button) {
+    button.addEventListener('click', function() {
+        var experienceId = this.dataset.experienceId;
+        $.ajax({
+            url: '/experiences/update/' + experienceId + '/',
+            method: 'GET',
+            data: { 
+              'pk': experienceId,
+              'csrfmiddlewaretoken': $('#editForm input[name="csrfmiddlewaretoken"]').val() 
+            },
+            success: function(response) {
+                console.log('AJAX Response:', response);
+                if (response.success) {
+                    populateFormFields(response.data);
+                    $('#editModal').modal('show'); // Show the modal
+                } else {
+                    console.error('Edit experience request failed:', response);
+                }
+            },
+            error: function(xhr, errmsg, err) {
+                console.error('Edit experience request failed:', errmsg);
+            }
+        });
+    });
+});
+
+  // document.getElementById('editButton').addEventListener('click', function() {
+  //   var experienceId = this.dataset.experienceId // Get the experience ID
+  //   $.ajax({
+  //     url: '/edit-experience/' + experienceId + '/',
+  //     method: 'GET',
+  //     success: function(response) {
+  //       console.log('AJAX Response:', response);
+  //       if (response.success) {
+  //         console.log('Experience data:', response.data); // Add this line for debugging
+  //         populateFormFields(response.data);
+  //         $('#editModal').modal('show'); // Show the modal
+  //       } else {
+  //         console.error('Edit experience request failed:', response);
+  //       }
+  //     },
+  //     error: function(xhr, errmsg, err) {
+  //       console.error('Edit experience request failed:', errmsg);
+  //     }
+  //   });
+  // });
+
   </script>
 
 {% endblock extrascripts %}

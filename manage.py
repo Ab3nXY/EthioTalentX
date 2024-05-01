@@ -6,7 +6,7 @@ import sys
 
 if __name__ == '__main__':
     os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ethiotalentx.settings')
-    os.environ.setdefault("DJANGO_CONFIGURATION", "Prod")
+    os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
     try:
         from configurations.management import execute_from_command_line
     except ImportError as exc:

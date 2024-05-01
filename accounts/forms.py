@@ -28,24 +28,10 @@ class ProfileForm(forms.ModelForm):
 class ExperienceForm(forms.ModelForm):
     class Meta:
         model = Experience
-        fields = '__all__' 
+        exclude = ['profile']
         widgets = {
             'description': forms.Textarea(attrs={'rows': 2}),  # Set the number of rows to 2
         }
-
-    def __init__(self, *args, **kwargs):
-        user = kwargs.pop('current_user', None)
-        super().__init__(*args, **kwargs)
-        if user:
-            self.fields['profile'].initial = user.profile
-
-    def save(self, commit=True):
-        instance = super().save(commit=False)
-        # Set the profile of the instance to the current user's profile
-        instance.profile = self.cleaned_data.get('profile')
-        if commit:
-            instance.save()
-        return instance
 
 class EducationForm(forms.ModelForm):
     class Meta:
