@@ -64,6 +64,14 @@ body {
     height: 60px;
     z-index: 1020;
 }
+.navbar.expanded {
+    background-color: blue;
+  }
+  
+.navbar-collapse.expanded {
+    margin-top: 120px;
+    background-color: rgb(68, 68, 68);
+}
 
 /* Sidebar Styles */
 .sidebar {
@@ -83,9 +91,11 @@ body {
     color: white;
     z-index: 1010;
 }
+.sidebar-text:hover {
+    color: blue;
+}
 .sidebar:hover .sidebar-text {
     display: inline;
-    opacity: 0.7; /* Adjust opacity on hover */
 }
 
 .sidebar-nav .nav-link {
@@ -148,3 +158,19 @@ footer {
     color: #fff; /* Change to desired text color */
 }
 
+/* Customize the datepicker popup (optional) */
+.datepicker > div {
+    background-color: #212529; /* Black background */
+    color: #fff; /* White text */
+  }
+  
+  .datepicker table th,
+  .datepicker table td {
+    color: #fff; /* White text for headers and days */
+  }
+  
+  .datepicker table tr.highlighted td,
+  .datepicker table tr.selected td {
+    background-color: #343a40; /* Highlight/selected day background */
+  }
+  
