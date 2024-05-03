@@ -193,7 +193,7 @@ class Dev(Configuration):
 
 class Prod(Dev):
 
-    DEBUG = True
+    DEBUG = False
 
     DATABASES = {
             'default': dj_database_url.config(default = os.getenv('PG_EX_URL'))
