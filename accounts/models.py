@@ -56,14 +56,14 @@ SKILLS_CHOICES = [
 
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
-    company = models.CharField(max_length=100, blank=True, null=True)
-    website = models.URLField(max_length=200, blank=True, null=True)
-    location = models.CharField(max_length=100, blank=True, null=True)
-    bio = models.TextField(blank=True, null=True)
-    githubusername = models.CharField(max_length=100, blank=True, null=True)
+    company = models.CharField(max_length=100, blank=True, null=True, default='')
+    website = models.URLField(max_length=200, blank=True, default='')
+    location = models.CharField(max_length=100, blank=True, null=True, default='')
+    bio = models.TextField(blank=True, null=True, default='')
+    githubusername = models.CharField(max_length=100, blank=True, null=True, default='')
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics', blank=True)
-    occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=False, null=True)
+    occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=False, null=True, default='')
     skills = models.ManyToManyField('Skill', related_name='profiles', blank=False)
 
     def __str__(self):
@@ -77,13 +77,13 @@ class Skill(models.Model):
 
 class Experience(models.Model):
     profile = models.ForeignKey(Profile, related_name='experience', on_delete=models.CASCADE)
-    title = models.CharField(max_length=100)
-    company = models.CharField(max_length=100)
-    location = models.CharField(max_length=100, blank=True, null=True)
+    title = models.CharField(max_length=100, default='')
+    company = models.CharField(max_length=100, default='')
+    location = models.CharField(max_length=100, blank=True, null=True, default='')
     from_date = models.DateField()
     to_date = models.DateField(blank=True, null=True)
     current = models.BooleanField(default=False)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True, default='')
 
     def __str__(self):
         return f'{self.title} at {self.company}'

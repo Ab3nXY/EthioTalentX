@@ -42,8 +42,15 @@ def profile(request):
         initial_skills = [skill.name for skill in profile.skills.all()] if profile else []
         form = ProfileForm(instance=profile, initial={'skills': initial_skills})
 
+    # Add form errors to context if the form is invalid
     context = {'profile': profile, 'form': form}
+    if form.errors:
+        context['error_message'] = 'Form is invalid. Please correct the errors below.'
+        print("error", context)
+
     return render(request, 'account/profile.html', context)
+
+
 
 
 def profile_detail(request, pk):

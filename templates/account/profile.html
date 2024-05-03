@@ -48,30 +48,42 @@
                 <div class="col-md-6 mb-3">
                     <div class="d-flex align-items-center">
                         <div class="rounded-circle overflow-hidden me-3" style="width: 80px; height: 80px;">
-                            <img id="preview" src="{% if profile.image %}{{ profile.image.url }}{% else %}{{ MEDIA_URL }}profile_pics/default.jpg{% endif %}" alt="Profile Image" style="width: 100%; height: 100%; object-fit: cover;">
+                            <img id="preview" src="{{ user.profile.image.url }}" alt="Profile Image" style="width: 100%; height: 100%; object-fit: cover;">
                         </div>
                         <label for="id_image" class="btn btn-primary">Profile Picture</label>
                         <input type="file" name="image" class="form-control visually-hidden" id="id_image" onchange="previewImage(event)">
+                        {% for error in form.image.errors %}
+                            <div class="invalid-feedback">{{ error }}</div>
+                        {% endfor %}
                     </div>
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="id_email" class="form-label">Email:*</label>
                     <input type="text" name="email" class="form-control" id="id_email" value="{{ user.email }}" readonly>
-                    {% if form.errors.email %}
-                        <div class="invalid-feedback">{{ form.errors.email }}</div>
-                    {% endif %}
+                    {% for error in form.email.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                     </div>
                 <div class="col-md-6 mb-3">
                     <label for="id_first_name" class="form-label">First Name:</label>
                     <input type="text" name="first_name" class="form-control" id="id_first_name" value="{{ user.first_name }}">
+                    {% for error in form.first_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="id_last_name" class="form-label">Last Name:</label>
                     <input type="text" name="last_name" class="form-control" id="id_last_name" value="{{ user.last_name }}">
+                    {% for error in form.last_name.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
                 <div class="col-md-6 mb-3">
                     <label for="id_location" class="form-label">Location:</label>
                     <input type="text" name="location" class="form-control" id="id_location" value="{{ form.location.value }}">
+                    {% for error in form.location.errors %}
+                        <div class="invalid-feedback">{{ error }}</div>
+                    {% endfor %}
                 </div>
             </div>
 
@@ -87,21 +99,30 @@
                     <option value="{{ choice.0 }}" {% if choice.0 == form.occupation.value %}selected{% endif %}>{{ choice.1 }}</option>
                     {% endfor %}
                 </select>
-                {% if form.errors.occupation %}
-                    <div class="invalid-feedback">{{ form.errors.occupation }}</div>
-                {% endif %}
+                {% for error in form.occupation.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
             <div class="col-md-6 mb-3">
                 <label for="id_company" class="form-label">Company:</label>
                 <input type="text" name="company" class="form-control" id="id_company" value="{{ form.company.value }}">
+                {% for error in form.company.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
             <div class="col-md-6 mb-3">
                 <label for="id_website" class="form-label">Website:</label>
                 <input type="url" name="website" class="form-control" id="id_website" value="{{ form.website.value }}">
+                {% for error in form.website.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
             <div class="col-md-6 mb-3">
                 <label for="id_githubusername" class="form-label">GitHub Username:</label>
                 <input type="text" name="githubusername" class="form-control" id="id_githubusername" value="{{ form.githubusername.value }}">
+                {% for error in form.githubusername.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
             </div>
             <div class="section-divider mt-4 px-2 ">
@@ -109,7 +130,7 @@
             </div>
 
             <div class="mb-3 border">
-                <label for="id_website" class="form-label me-2">Skills:*</label>
+                <label for="id_skills" class="form-label me-2">Skills:*</label>
                 <span class="text-muted small">Choose one or more skills</span>
                 <div class="row">
                     {% for skill in form.skills.field.choices %}
@@ -124,9 +145,9 @@
                         {% endif %}
                     {% endfor %}
                 </div>
-                {% if form.errors.skills %}
-                    <div class="invalid-feedback d-block">{{ form.errors.skills }}</div>
-                {% endif %}
+                {% for error in form.skills.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
             </div>
             
 
@@ -134,6 +155,9 @@
                 <label for="id_bio" class="form-label">Bio:</label>
                 <textarea name="bio" class="form-control" id="id_bio">{{ form.bio.value }}</textarea>
             </div>
+            {% for error in form.bio.errors %}
+                <div class="invalid-feedback">{{ error }}</div>
+            {% endfor %}
             <div class="row">
                 <div class="col-md-6 mb-3">
                 <button type="submit" class="btn btn-primary">Update Profile</button>
