@@ -4,12 +4,12 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm, ExperienceForm, EducationForm
 from .models import Profile, Skill, Education, Experience
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic import CreateView, DeleteView, UpdateView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
-
+from django.contrib.messages.views import SuccessMessageMixin
 
 # Create your views here.
 def index(request):
@@ -93,25 +93,40 @@ class ExperienceCreateView(LoginRequiredMixin, CreateView):
     def form_valid(self, form):
         form.instance.profile = self.request.user.profile
         return super().form_valid(form)
-
-class ExperienceUpdateView(LoginRequiredMixin, UpdateView):
+    
+class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Experience
     form_class = ExperienceForm
-    template_name = 'account/add_experience.html'
+    template_name = 'account/edit_experience.html'  # Use the same template for editing
     success_message = 'Experience updated successfully!'
 
-    def form_valid(self, form):
-        form.instance.profile = self.request.user.profile
-        response = super().form_valid(form)
-        print("Form is valid and ready to be saved!")
-        if self.request.is_ajax():
-            print('JSON response:', {'success': True})
-            return JsonResponse({'success': True})
-        return response
-
     def get_success_url(self):
-        return reverse_lazy('add_experience')
-    
+        return reverse_lazy('add_experience')  
+
+    def form_valid(self, form):
+        print("Form is valid")
+        response = super().form_valid(form)
+        if self.request.is_ajax():
+            return JsonResponse({'success': True})  # AJAX success response
+        else:
+            return response  # Non-AJAX success response
+
+    def form_invalid(self, form):
+        print("Form is invalid")
+        response = super().form_invalid(form)
+        if self.request.is_ajax():
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)  # AJAX error response
+        else:
+            return response  # Non-AJAX error response
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        experience = self.get_object()  # Retrieve the experience object
+        print("Experience:", experience)
+        context['experience'] = experience
+        return context
+
+
 @method_decorator(login_required, name='dispatch')
 class ExperienceDeleteView(DeleteView):
     model = Experience
