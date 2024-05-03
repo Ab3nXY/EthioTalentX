@@ -15,7 +15,6 @@ OCCUPATION_CHOICES = [
     ('Machine Learning Engineer', 'Machine Learning Engineer'),
 ]
 
-
 SKILLS_CHOICES = [
     ('HTML', 'HTML'),
     ('CSS', 'CSS'),
@@ -51,9 +50,6 @@ SKILLS_CHOICES = [
     ('Matplotlib', 'Matplotlib'),
 ]
 
-
-
-
 class Profile(models.Model):
     user = models.OneToOneField(User, on_delete=models.CASCADE)
     company = models.CharField(max_length=100, blank=True, null=True, default='')
@@ -63,7 +59,7 @@ class Profile(models.Model):
     githubusername = models.CharField(max_length=100, blank=True, null=True, default='')
     date = models.DateTimeField(auto_now_add=True)
     image = models.ImageField(default="profile_pics/default.jpg", upload_to='profile_pics', blank=True)
-    occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=False, null=True, default='')
+    occupation = models.CharField(max_length=100, choices=OCCUPATION_CHOICES, blank=False, default='')
     skills = models.ManyToManyField('Skill', related_name='profiles', blank=False)
 
     def __str__(self):

@@ -4,14 +4,13 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm, ExperienceForm, EducationForm
 from .models import Profile, Skill, Education, Experience
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView, DeleteView, UpdateView, DetailView
+from django.views.generic import CreateView, DeleteView, UpdateView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.contrib.messages.views import SuccessMessageMixin
 
-# Create your views here.
 def index(request):
   return render(request, 'index.html')
 
@@ -27,10 +26,10 @@ def profile(request):
         if form.is_valid():
             profile = form.save(commit=False)
             profile.user = request.user
-            profile.user.first_name = request.POST.get('first_name', '')  # Update first_name
-            profile.user.last_name = request.POST.get('last_name', '')  # Update last_name
-            profile.user.save()  # Save user object
-            profile.save()  # Save profile object
+            profile.user.first_name = request.POST.get('first_name', '')  
+            profile.user.last_name = request.POST.get('last_name', '')  
+            profile.user.save()  
+            profile.save()  
             skill_names = form.cleaned_data.get('skills', [])
             skills = []
             for name in skill_names:
@@ -42,11 +41,9 @@ def profile(request):
         initial_skills = [skill.name for skill in profile.skills.all()] if profile else []
         form = ProfileForm(instance=profile, initial={'skills': initial_skills})
 
-    # Add form errors to context if the form is invalid
     context = {'profile': profile, 'form': form}
     if form.errors:
         context['error_message'] = 'Form is invalid. Please correct the errors below.'
-        print("error", context)
 
     return render(request, 'account/profile.html', context)
 
@@ -104,7 +101,7 @@ class ExperienceCreateView(LoginRequiredMixin, CreateView):
 class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Experience
     form_class = ExperienceForm
-    template_name = 'account/edit_experience.html'  # Use the same template for editing
+    template_name = 'account/edit_experience.html'  
     success_message = 'Experience updated successfully!'
 
     def get_success_url(self):
@@ -114,17 +111,17 @@ class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         print("Form is valid")
         response = super().form_valid(form)
         if self.request.is_ajax():
-            return JsonResponse({'success': True})  # AJAX success response
+            return JsonResponse({'success': True})  
         else:
-            return response  # Non-AJAX success response
+            return response  
 
     def form_invalid(self, form):
         print("Form is invalid")
         response = super().form_invalid(form)
         if self.request.is_ajax():
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)  # AJAX error response
+            return JsonResponse({'success': False, 'errors': form.errors}, status=400)  
         else:
-            return response  # Non-AJAX error response
+            return response  
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)

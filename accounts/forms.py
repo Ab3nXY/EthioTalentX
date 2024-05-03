@@ -1,8 +1,6 @@
 from django import forms
-from .models import Profile, Experience, Education, OCCUPATION_CHOICES, SKILLS_CHOICES, Skill
+from .models import Profile, Experience, Education, OCCUPATION_CHOICES, SKILLS_CHOICES
 from crispy_forms.helper import FormHelper
-from crispy_forms.layout import Layout, Fieldset, Row, Column, Submit
-from django.contrib.auth.models import User
 
 
 class ProfileForm(forms.ModelForm):
@@ -11,7 +9,7 @@ class ProfileForm(forms.ModelForm):
 
     class Meta:
         model = Profile
-        exclude = ['user']  # Exclude the user field from the form
+        exclude = ['user']
         widgets = {
             'bio': forms.Textarea(attrs={'rows': 2}),
         }
@@ -32,10 +30,13 @@ class ExperienceForm(forms.ModelForm):
         model = Experience
         exclude = ['profile']
         widgets = {
-            'description': forms.Textarea(attrs={'rows': 2}),  # Set the number of rows to 2
+            'description': forms.Textarea(attrs={'rows': 2}),
         }
 
 class EducationForm(forms.ModelForm):
     class Meta:
         model = Education
-        fields = '__all__'
+        exclude = ['profile']
+        widgets = {
+            'description': forms.Textarea(attrs={'rows': 2}),
+        }
