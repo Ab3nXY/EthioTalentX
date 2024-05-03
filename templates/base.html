@@ -14,7 +14,8 @@
     <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
     <link rel="stylesheet" href="{% static 'css/fontawesome-free-6.5.2-web/css/all.min.css' %}">
     <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">    
+    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
+    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>    
 
     <!-- Favicon-->
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/android-chrome-192x192.png' %}">
@@ -90,54 +91,51 @@
     {% endif %}
     {% block content %}
     {% endblock content %}
-    <script>
-        document.addEventListener("DOMContentLoaded", function() {
-          const navbarToggler = document.querySelector(".navbar-toggler");
-          const navbarCollapse = document.querySelector(".navbar-collapse");
-      
-          navbarToggler.addEventListener("click", function() {
-            navbarCollapse.classList.toggle("expanded");
-          });
-      
-          // Detect window resize and remove 'expanded' class from navbar collapse
-          window.addEventListener("resize", function() {
-            if (window.innerWidth >= 992) {
-              navbarCollapse.classList.remove("expanded");
-            }
-          });
-        });
 
-        // drop down nav for mobile
-        const navbarToggler = document.querySelector('.navbar-toggler');
-        const navbarCollapse = document.getElementById('navbarSupportedContent');
-        const documentBody = document.body; // Reference the entire document body
-
-        navbarToggler.addEventListener('click', () => {
-        navbarCollapse.classList.toggle('show'); // Toggle 'show' class for collapse behavior
-        });
-
-        // Close the dropdown on document click (excluding the navbar itself)
-        documentBody.addEventListener('click', (event) => {
-        if (navbarCollapse.classList.contains('show') && // Ensure dropdown is open
-            !navbarCollapse.contains(event.target)) { // Check click outside navbar
-            navbarCollapse.classList.remove('show'); // Close dropdown
-        }
-        });
-
-
-
-      </script>
-
-    <script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/jquery-3.6.0.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/bootstrap-datepicker.min.js' %}" type="text/javascript"></script>
-    <script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
-    
-    {% block extrascripts %}
-    {% endblock extrascripts %}
 </body>
 
+<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/bootstrap-datepicker.min.js' %}" type="text/javascript"></script>
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
+    
+<script>
+    document.addEventListener("DOMContentLoaded", function() {
+        const navbarToggler = document.querySelector(".navbar-toggler");
+        const navbarCollapse = document.querySelector(".navbar-collapse");
+    
+        navbarToggler.addEventListener("click", function() {
+        navbarCollapse.classList.toggle("expanded");
+        });
+    
+        // Detect window resize and remove 'expanded' class from navbar collapse
+        window.addEventListener("resize", function() {
+        if (window.innerWidth >= 992) {
+            navbarCollapse.classList.remove("expanded");
+        }
+        });
+    });
 
+    // drop down nav for mobile
+    const navbarToggler = document.querySelector('.navbar-toggler');
+    const navbarCollapse = document.getElementById('navbarSupportedContent');
+    const documentBody = document.body; // Reference the entire document body
+
+    navbarToggler.addEventListener('click', () => {
+    navbarCollapse.classList.toggle('show'); // Toggle 'show' class for collapse behavior
+    });
+
+    // Close the dropdown on document click (excluding the navbar itself)
+    documentBody.addEventListener('click', (event) => {
+    if (navbarCollapse.classList.contains('show') && // Ensure dropdown is open
+        !navbarCollapse.contains(event.target)) { // Check click outside navbar
+        navbarCollapse.classList.remove('show'); // Close dropdown
+    }
+    });
+    </script>
+
+    {% block extrascripts %}
+    {% endblock extrascripts %}
 
 <footer class="footer justify-content-end">
       <span class="text-muted">&copy; Copyright 2024 Created by Ab3nXY</span>

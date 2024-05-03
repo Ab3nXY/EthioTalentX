@@ -4,7 +4,7 @@ from django.contrib.auth.decorators import login_required
 from .forms import ProfileForm, ExperienceForm, EducationForm
 from .models import Profile, Skill, Education, Experience
 from django.shortcuts import get_object_or_404
-from django.views.generic import CreateView, DeleteView, UpdateView
+from django.views.generic import CreateView, DeleteView, UpdateView, DetailView
 from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
@@ -47,9 +47,6 @@ def profile(request):
 
     return render(request, 'account/profile.html', context)
 
-
-
-
 def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk)
     context = {'profile': profile}
@@ -89,6 +86,13 @@ class ExperienceCreateView(LoginRequiredMixin, CreateView):
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         context['experiences'] = Experience.objects.filter(profile=self.request.user.profile)
+        
+        # Add the newly created experience to the context
+        if self.object:
+            experience = self.object.pk
+            print("Newly created experience PK:", experience)
+            context['experience'] = experience
+        
         return context
 
     def get_success_url(self):
@@ -101,27 +105,20 @@ class ExperienceCreateView(LoginRequiredMixin, CreateView):
 class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
     model = Experience
     form_class = ExperienceForm
-    template_name = 'account/edit_experience.html'  
+    template_name = 'account/edit_experience.html'
     success_message = 'Experience updated successfully!'
 
     def get_success_url(self):
-        return reverse_lazy('add_experience')  
+        return reverse_lazy('add_experience')  # Consider redirecting to a more relevant page
 
     def form_valid(self, form):
         print("Form is valid")
-        response = super().form_valid(form)
-        if self.request.is_ajax():
-            return JsonResponse({'success': True})  
-        else:
-            return response  
+        form.save()  # Save the updated experience
+        return super().form_valid(form)
 
     def form_invalid(self, form):
         print("Form is invalid")
-        response = super().form_invalid(form)
-        if self.request.is_ajax():
-            return JsonResponse({'success': False, 'errors': form.errors}, status=400)  
-        else:
-            return response  
+        return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
@@ -130,6 +127,27 @@ class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         context['experience'] = experience
         return context
 
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.kwargs['pk'])
+
+class ExperienceDetailView(LoginRequiredMixin, DetailView):
+    model = Experience
+    template_name = 'account/experience_detail.html'
+    context_object_name = 'experience'
+
+    def get(self, request, *args, **kwargs):
+        experience = self.get_object()
+        data = {
+            'id': experience.id,
+            'company': experience.company,
+            'title': experience.title,
+            'location': experience.location,
+            'description': experience.description,
+            'from_date': experience.from_date,
+            'to_date': experience.to_date,
+            'current': experience.current,
+        }
+        return JsonResponse(data)
 
 @method_decorator(login_required, name='dispatch')
 class ExperienceDeleteView(DeleteView):

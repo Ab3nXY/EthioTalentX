@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ experience.title }}</h1>
+  <p><strong>Company:</strong> {{ experience.company }}</p>
+  <p><strong>Location:</strong> {{ experience.location }}</p>
+  <p><strong>Description:</strong> {{ experience.description }}</p>
+  <p><strong>From Date:</strong> {{ experience.from_date }}</p>
+  <p><strong>To Date:</strong> {% if experience.to_date %}{{ experience.to_date }}{% else %}Present{% endif %}</p>
+  <p><strong>Current:</strong> {% if experience.current %}Yes{% else %}No{% endif %}</p>
+{% endblock %}
