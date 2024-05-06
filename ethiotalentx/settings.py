@@ -193,8 +193,10 @@ class Dev(Configuration):
 
 class Prod(Dev):
 
-    DEBUG = False
-
+    DEBUG = True
     DATABASES = {
-            'default': dj_database_url.config(default = os.getenv('PG_EX_URL'))
+            'default': dj_database_url.config(
+                default = os.getenv('PG_EX_URL'),
+                conn_max_age=600,
+                )
             }
