@@ -76,7 +76,7 @@ class Experience(models.Model):
     title = models.CharField(max_length=100, default='')
     company = models.CharField(max_length=100, default='')
     location = models.CharField(max_length=100, blank=True, null=True, default='')
-    from_date = models.DateField()
+    from_date = models.DateField(blank=False)
     to_date = models.DateField(blank=True, null=True)
     current = models.BooleanField(default=False)
     description = models.TextField(blank=True, null=True, default='')
@@ -86,16 +86,15 @@ class Experience(models.Model):
 
 class Education(models.Model):
     profile = models.ForeignKey(Profile, related_name='education', on_delete=models.CASCADE)
-    school = models.CharField(max_length=100)
-    degree = models.CharField(max_length=100)
-    fieldofstudy = models.CharField(max_length=100)
-    from_date = models.DateField()
+    school = models.CharField(max_length=100, blank=False, default='')
+    degree = models.CharField(max_length=100, blank=False, default='')
+    fieldofstudy = models.CharField(max_length=100, blank=False, default='')
+    from_date = models.DateField(blank=False)
     to_date = models.DateField(blank=True, null=True)
     current = models.BooleanField(default=False)
-    description = models.TextField(blank=True, null=True)
+    description = models.TextField(blank=True, null=True, default='')
 
     def __str__(self):
         return f'{self.degree} in {self.fieldofstudy} at {self.school}'
     
-    class Meta:
-        app_label = 'accounts'
+

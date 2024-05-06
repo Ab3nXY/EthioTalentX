@@ -71,6 +71,7 @@ def profiles(request):
     context = {'profiles': profiles}
     return render(request, 'account/profiles.html', context)
 
+#experiance related views
 class ExperienceCreateView(LoginRequiredMixin, CreateView):
     model = Experience
     form_class = ExperienceForm
@@ -112,18 +113,15 @@ class ExperienceUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
         return reverse_lazy('add_experience')  # Consider redirecting to a more relevant page
 
     def form_valid(self, form):
-        print("Form is valid")
         form.save()  # Save the updated experience
         return super().form_valid(form)
 
     def form_invalid(self, form):
-        print("Form is invalid")
         return super().form_invalid(form)
 
     def get_context_data(self, **kwargs):
         context = super().get_context_data(**kwargs)
         experience = self.get_object()  # Retrieve the experience object
-        print("Experience:", experience)
         context['experience'] = experience
         return context
 
@@ -149,31 +147,85 @@ class ExperienceDetailView(LoginRequiredMixin, DetailView):
         }
         return JsonResponse(data)
 
-@method_decorator(login_required, name='dispatch')
-class ExperienceDeleteView(DeleteView):
+class ExperienceDeleteView(LoginRequiredMixin, DeleteView):
     model = Experience
     success_url = reverse_lazy('add_experience')
 
-@login_required
-def add_education(request):
-    """
-    Renders a form for users to create or edit education data.
+# education related views
+class EducationCreateView(LoginRequiredMixin, CreateView):
+    model = Education
+    form_class = EducationForm
+    template_name = 'account/add_education.html'
+    success_message = 'Education created successfully!'
 
-    Args:
-        request (HttpRequest): The incoming HTTP request.
+    def get_form_kwargs(self):
+        kwargs = super().get_form_kwargs()
+        user = self.request.user
+        kwargs['initial'] = {'profile': user.profile}
+        return kwargs
 
-    Returns:
-        HttpResponse: A rendered HTML response containing the form.
-    """
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        context['educations'] = Education.objects.filter(profile=self.request.user.profile)
+        
+        # Add the newly created education to the context
+        if self.object:
+            education = self.object.pk
+            context['education'] = education
+        
+        return context
 
-    if request.method == 'POST':
-        form = EducationForm(request.POST)
-        if form.is_valid():
-            # Process valid form data here (save to database, etc.)
-            form.save()  # Assuming you want to save the form data
-            return render(request, 'education_success.html', {'message': 'Education saved successfully!'})
-    else:
-        form = EducationForm()
+    def get_success_url(self):
+        return reverse_lazy('add_education')
+    
+    def form_valid(self, form):
+        form.instance.profile = self.request.user.profile
+        return super().form_valid(form)
+    
+class EducationUpdateView(LoginRequiredMixin, SuccessMessageMixin, UpdateView):
+    model = Education
+    form_class = EducationForm
+    template_name = 'account/edit_education.html'
+    success_message = 'Education updated successfully!'
 
-    context = {'form': form}
-    return render(request, 'account/add_education.html', context)
+    def get_success_url(self):
+        return reverse_lazy('add_education')  # Consider redirecting to a more relevant page
+
+    def form_valid(self, form):
+        form.save()  
+        return super().form_valid(form)
+
+    def form_invalid(self, form):
+        return super().form_invalid(form)
+
+    def get_context_data(self, **kwargs):
+        context = super().get_context_data(**kwargs)
+        education = self.get_object()  
+        context['education'] = education
+        return context
+
+    def get_object(self, queryset=None):
+        return self.model.objects.get(pk=self.kwargs['pk'])
+
+class EducationDetailView(LoginRequiredMixin, DetailView):
+    model = Education
+    template_name = 'account/education_detail.html'
+    context_object_name = 'education'
+
+    def get(self, request, *args, **kwargs):
+        education = self.get_object()
+        data = {
+            'id': education.id,
+            'school': education.school,
+            'fieldofstudy': education.fieldofstudy,
+            'degree': education.degree,
+            'description': education.description,
+            'from_date': education.from_date,
+            'to_date': education.to_date,
+            'current': education.current,
+        }
+        return JsonResponse(data)
+
+class EducationDeleteView(LoginRequiredMixin, DeleteView):
+    model = Education
+    success_url = reverse_lazy('add_education')

@@ -3,7 +3,7 @@
 {% load crispy_forms_filters %}
 
 {% block head_title %}
-  Education
+  Experiance
 {% endblock head_title %}
 
 {% block BG %}
@@ -14,66 +14,171 @@
 {% block content %}
 <div class="container mt-5"  style="padding-left: 60px;">
   <div class="row align-items-center">
-    <div class="col-md-8 d-flex">
-      <a href="{% url 'profile' %}" class="btn btn-secondary me-2 btn-sm" id="profile-btn">
-        <i class="fas fa-user-edit"></i> Edit Profile
+      <div class="col-md-8 d-flex">
+        <a href="{% url 'profile' %}" class="btn btn-secondary me-2 btn-sm" id="profile-btn">
+          <i class="fas fa-user-edit"></i> Edit Profile
+      </a>
+      <a href="{% url 'add_education' %}" class="btn btn-secondary me-2 btn-sm" id="education-btn">
+        <i class="fas fa-graduation-cap"></i> Add Education
     </a>
-    <a href="{% url 'add_education' %}" class="btn btn-secondary me-2 btn-sm" id="education-btn">
-      <i class="fas fa-graduation-cap"></i> Add Education
-  </a>
-    <a href="{% url 'add_experience' %}" class="btn btn-secondary me-2 btn-sm" id="experience-btn">
-        <i class="fas fa-briefcase"></i> Add Experience
-    </a>
-  </div>
+      <a href="{% url 'add_experience' %}" class="btn btn-secondary me-2 btn-sm" id="experience-btn">
+          <i class="fas fa-briefcase"></i> Add experience
+      </a>
+      </div>
   </div>
 
-  <div class="row mt-4">
-    <div class="col-md-12">
-        <form method="post" enctype="multipart/form-data">
-          {% csrf_token %}
-          {{ form| crispy }}
-          <button type="submit" class="btn btn-primary">Update Education</button>
-        </form>
-    </div>
+  <h2 style="font-weight: bold; margin-top: 20px; color: lightblue;"><i class="fas fa-user-graduate me-2"></i>Educations</h2>
+  <div class="row row-cols-1 row-cols-md-2 g-4">
+    {% for education in educations %}
+      <div class="col">
+          <div class="card col-md-12 shadow-sm">
+            <div class="card-body ">
+
+              <h5 class="card-title">{{ education.school }}</h5>
+              <p class="card-text">
+                <i class="fas fa-certificate"></i> {{ education.degree }}<br>
+                {% if education.degree %}
+                  <i class="fas fa-book-open"></i> {{ education.fieldofstudy }}<br>
+                {% endif %}
+                <i class="fas fa-calendar-alt"></i> {{ education.from_date }}{% if education.to_date %} - {{ education.to_date }}{% else %} (Present){% endif %}
+              </p>
+              
+              
+              <div class="d-flex justify-content-between align-items-center">
+
+                    <!-- Button trigger modal -->
+                    <button type="button" class="btn btn-sm btn-outline-primary mb-2 editButton2" data-education-id="{{ education.pk }}">
+                      Edit <i class="fas fa-edit"></i>
+                    </button>
+
+                    
+                <form method="post" action="{% url 'delete_education' education.pk %}">
+                  {% csrf_token %}
+                  <button type="submit" class="btn btn-sm btn-outline-danger mt-auto">Delete <i class="fas fa-trash"></i></button>
+                </form>
+
+              </div>
+
+            </div>
+          </div>
+        </div>
+      {% empty %}
+      <div class="col">
+          <p>No educations added yet.</p>
+      </div>
+    {% endfor %}
   </div>
+   
+  <!-- Add education -->
+  <div class="row mt-4" style="color: grey;">
+    <div class="col-md-12">   
+    <small class="form-text text-muted">* Fields are required.</small>
+    <form method="post" enctype="multipart/form-data">
+        {% csrf_token %}
+
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_school" class="form-label">School:*</label>
+                <input type="text" name="school" class="form-control" id="id_school">
+                {% for error in form.school.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_degree" class="form-label">Degree:*</label>
+                <input type="text" name="degree" class="form-control" id="id_degree">
+                {% for error in form.degree.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_fieldofstudy" class="form-label">Field Of Study:*</label>
+                <input type="text" name="fieldofstudy" class="form-control" id="id_fieldofstudy">
+                {% for error in form.fieldofstudy.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_description" class="form-label">Description:</label>
+                <textarea name="description" class="form-control" id="id_description"></textarea>
+                {% for error in form.description.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row">
+            <div class="col-md-6 mb-3">
+                <label for="id_from_date" class="form-label">From Date:*</label>
+                <input type="date" name="from_date" class="form-control" id="id_from_date" >
+                {% for error in form.from_date.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+            <div class="col-md-6 mb-3">
+                <label for="id_to_date" class="form-label">To Date:</label>
+                <input type="date" name="to_date" class="form-control" id="id_to_date" >
+                {% for error in form.to_date.errors %}
+                    <div class="invalid-feedback">{{ error }}</div>
+                {% endfor %}
+            </div>
+        </div>
+        <div class="row justify-content-end">
+            <div class="col-md-6 mb-3">
+                <label for="id_current" class="form-label">Current:</label>
+                <input type="checkbox" name="current" class="form-check-input" id="id_current" {% if form.current.value %}checked{% endif %}>
+            </div>
+        </div>
+        <button type="submit" class="btn btn-primary col-md-3 mb-3 align-items-center">Add Education</button>
+    </form>
 </div>
+    
+      
+</div>
+{% include 'account/edit_education.html' %}
 {% endblock content %}
 
 {% block extrascripts %}
 <script>
-document.addEventListener('DOMContentLoaded', function() {
-    // Get the current URL path
-    var currentPath = window.location.pathname;
+  // for button activation start
+  document.addEventListener('DOMContentLoaded', function() {
+      // Get the current URL path
+      var currentPath = window.location.pathname;
 
-    // Get all the buttons
-    var buttons = document.querySelectorAll('.btn-secondary');
+      // Get all the buttons
+      var buttons = document.querySelectorAll('.btn-secondary');
 
-    // Loop through each button
-    buttons.forEach(function(button) {
-        // Check if the button's href matches the current URL path
-        if (button.getAttribute('href') === currentPath) {
-            // Add active class to the button
-            button.classList.add('active');
-        }
+      // Loop through each button
+      buttons.forEach(function(button) {
+          // Check if the button's href matches the current URL path
+          if (button.getAttribute('href') === currentPath) {
+              // Add active class to the button
+              button.classList.add('active');
+          }
 
-        // Add click event listener to each button
-        button.addEventListener('click', function(event) {
-            // Prevent the default behavior of the anchor tag
-            event.preventDefault();
+          // Add click event listener to each button
+          button.addEventListener('click', function(event) {
+              // Prevent the default behavior of the anchor tag
+              event.preventDefault();
 
-            // Remove active class from all buttons
-            buttons.forEach(function(btn) {
-                btn.classList.remove('active');
-            });
+              // Remove active class from all buttons
+              buttons.forEach(function(btn) {
+                  btn.classList.remove('active');
+              });
 
-            // Add active class to the clicked button
-            button.classList.add('active');
+              // Add active class to the clicked button
+              button.classList.add('active');
 
-            // Redirect to the button's href
-            window.location.href = button.getAttribute('href');
-        });
-    });
-});
+              // Redirect to the button's href
+              window.location.href = button.getAttribute('href');
+          });
+      });
+  });
+  // for button activation end
 
-</script>
+  
+    
+  </script>
+
 {% endblock extrascripts %}

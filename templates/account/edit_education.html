@@ -1,35 +1,35 @@
-<!-- Edit Experience Modal -->
+<!-- Edit Education Modal -->
 <div class="modal fade" id="editModal" tabindex="-1" aria-labelledby="editModalLabel" aria-hidden="true">
 <div class="modal-dialog modal-dialog-centered">
     <div class="modal-content">
     <div class="modal-header">
-        <h5 class="modal-title" id="editModalLabel">Edit Experience</h5>
+        <h5 class="modal-title" id="editModalLabel">Edit Education</h5>
         <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
     </div>
     <div class="modal-body" style="color: grey;">
         <form id="editForm" method="POST">
         {% csrf_token %}
-        <div class="row">
+        <div class="row" >
             <div class="col-md-6 mb-3">
-                <label for="id_company" class="form-label">Company:*</label>
-                <input type="text" name="company" class="form-control" id="id_company">
-                {% for error in form.company.errors %}
+                <label for="id_school" class="form-label">School:*</label>
+                <input type="text" name="school" class="form-control" id="id_school">
+                {% for error in form.school.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
             </div>
             <div class="col-md-6 mb-3">
-                <label for="id_title" class="form-label">Title:*</label>
-                <input type="text" name="title" class="form-control" id="id_title">
-                {% for error in form.title.errors %}
+                <label for="id_degree" class="form-label">Degree:*</label>
+                <input type="text" name="degree" class="form-control" id="id_degree">
+                {% for error in form.degree.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
             </div>
         </div>
         <div class="row">
             <div class="col-md-6 mb-3">
-                <label for="id_location" class="form-label">Location:</label>
-                <input type="text" name="location" class="form-control" id="id_location">
-                {% for error in form.location.errors %}
+                <label for="id_fieldofstudy" class="form-label">Field Of Study:*</label>
+                <input type="text" name="fieldofstudy" class="form-control" id="id_fieldofstudy">
+                {% for error in form.fieldofstudy.errors %}
                     <div class="invalid-feedback">{{ error }}</div>
                 {% endfor %}
             </div>
@@ -75,25 +75,25 @@
 
 {% block extrascripts %}
 <script>
-$('.editButton').click(function(event) {
+$('.editButton2').click(function(event) {
     event.preventDefault();
-    const experienceId = $(this).data('experience-id');
+    const educationId = $(this).data('education-id');
     
-    // Construct the URL for editing the experience
-    const editUrl = '/experiences/update/' + experienceId + '/';
+    // Construct the URL for editing the education
+    const editUrl = '/educations/update/' + educationId + '/';
     
     // Set the form action attribute to the edit URL
     $('#editForm').attr('action', editUrl);
     
-    // Fetch the data for the specific experience and populate the form fields
+    // Fetch the data for the specific education and populate the form fields
     $.ajax({
-        url: '/experiences/' + experienceId + '/',
+        url: '/educations/' + educationId + '/',
         method: 'GET',
         success: function(data) {
-            // Populate the form fields inside the editForm with the experience data
-            $('#editForm #id_company').val(data.company);
-            $('#editForm #id_title').val(data.title);
-            $('#editForm #id_location').val(data.location);
+            // Populate the form fields inside the editForm with the education data
+            $('#editForm #id_school').val(data.school);
+            $('#editForm #id_degree').val(data.degree);
+            $('#editForm #id_fieldofstudy').val(data.fieldofstudy);
             $('#editForm #id_description').val(data.description);
             $('#editForm #id_from_date').val(data.from_date);
             $('#editForm #id_to_date').val(data.to_date);
@@ -107,7 +107,7 @@ $('.editButton').click(function(event) {
             $('#editModal').modal('show');
         },
         error: function(error) {
-            console.error('Error fetching experience data:', error);
+            console.error('Error fetching education data:', error);
         }
     });
 });

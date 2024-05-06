@@ -1,0 +1,11 @@
+{% extends "base.html" %}
+
+{% block content %}
+  <h1>{{ education.school }}</h1>
+  <p><strong>Degree:</strong> {{ education.Degree }}</p>
+  <p><strong>Field Of Study:</strong> {{ education.fieldofstudy}}</p>
+  <p><strong>Description:</strong> {{ education.description }}</p>
+  <p><strong>From Date:</strong> {{ education.from_date }}</p>
+  <p><strong>To Date:</strong> {% if education.to_date %}{{ education.to_date }}{% else %}Present{% endif %}</p>
+  <p><strong>Current:</strong> {% if education.current %}Yes{% else %}No{% endif %}</p>
+{% endblock %}
