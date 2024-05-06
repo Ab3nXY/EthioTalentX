@@ -3,12 +3,100 @@
 {% block head_title %}
     Dashboard
 {% endblock head_title %}
-{% block BG %}<div class="background-container"></div>{% endblock BG %}
+
+{% block BG %}
+    <div class="background-container"></div>
+{% endblock BG %}
+
 {% block content %}
-<div class="container mt-2 d-flex justify-content-center justify-content-md-start me-2">
-  <p class="welcome-message d-flex align-items-center" style="font-size: 24px; font-weight: 600;">
-    <i class="fas fa-user me-2"></i> Welcome, {{ user.first_name }}!
-  </p>
+<div class="container mt-4">
+  <div class="row justify-content-center justify-content-md-start">
+    <div class="col-md-8">
+      <div class="custom-card">
+        <div class="custom-card-header bg-primary text-white">
+          <h5 class="custom-card-title"><i class="fas fa-user me-2"></i> Welcome, {{ user.first_name }}!</h5>
+        </div>
+        <div class="custom-card-body">
+          <div class="row">
+            <div class="col-md-4">
+              <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="img-fluid rounded-circle profile-pic">
+            </div>
+            <div class="col-md-8">
+              <p><b>{{ user.username }}</b></p>
+              <p>{{ user.profile.occupation }}</p>
+              <p>{{ user.profile.location }}</p>
+              <p>{{ user.profile.bio }}</p>
+              <p><b>Skills:</b></p>
+              <ul class="list-unstyled">
+                {% for skill in user.profile.skills.all %}
+                  <li><i class="fas fa-check me-2" style="color: green;"></i>{{ skill.name }}</li>
+                {% endfor %}
+              </ul>
+              {% if not user.profile.bio or not user.profile.skills.all %}
+                <p><a href="{% url 'profile' %}" class="btn btn-primary">Complete your profile</a></p>
+              {% endif %}
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-md-4 ">
+      <div class="row">
+        <div class="col">
+          <div class="custom-card">
+            <div class="custom-card-header bg-secondary text-white">
+              <h5 class="custom-card-title">Experience</h5>
+            </div>
+            <div class="custom-card-body">
+              {% if user.profile.experience.all %}
+                {% for exp in user.profile.experience.all %}
+                <div class="custom-card mb-2" style="background-color: rgb(152, 163, 167);">
+                    <div class="custom-card-body p-2 fs-8">
+                        <h6 class="custom-card-title">{{ exp.title }} at {{ exp.company }}</h6>
+                        <p class="custom-card-text mb-0">{{ exp.location }}</p>
+                        <p class="custom-card-text mb-0 ">{{ exp.from_date|date:"F Y" }} - {% if exp.current %}Present{% else %}{{ exp.to_date|date:"F Y" }}{% endif %}</p>
+                    </div>
+                </div>
+                
+                {% endfor %}
+              {% else %}
+                <p>You haven't added any experience yet.</p>
+              {% endif %}
+              <a href="{% url 'add_experience' %}" class="btn btn-secondary text-white">Add Experience</a>
+            </div>
+          </div>
+        </div>
+      </div>
+
+      <div class="row mt-4">
+        <div class="col">
+          <div class="custom-card">
+            <div class="custom-card-header bg-secondary text-white">
+              <h5 class="custom-card-title">Education</h5>
+            </div>
+            <div class="custom-card-body">
+              {% if user.profile.education.all %}
+                {% for edu in user.profile.education.all %}
+                <div class="custom-card mb-2" style="background-color: rgb(152, 163, 167);">
+                    <div class="custom-card-body p-2 fs-8">
+                        <h6 class="custom-card-title mb-0">{{ edu.degree }} in {{ edu.fieldofstudy }} at {{ edu.school }}</h6>
+                        <p class="custom-card-text mb-0">{{ edu.from_date|date:"F Y" }} - {% if edu.current %}Present{% else %}{{ edu.to_date|date:"F Y" }}{% endif %}</p>
+                        <p class="custom-card-text mb-0">{{ edu.description|truncatewords:50 }}</p>
+                    </div>
+                </div>
+                {% endfor %}
+
+              {% else %}
+                <p>You haven't added any education yet.</p>
+              {% endif %}
+              <a href="{% url 'add_education' %}" class="btn btn-secondary text-white">Add Education</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
 </div>
 
 {% endblock content %}

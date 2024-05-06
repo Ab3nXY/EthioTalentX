@@ -38,7 +38,7 @@
               <p class="card-text">
                 <i class="fas fa-briefcase"></i> {{ experience.company }}<br>
                 {% if experience.location %}
-                  <i class="fas fa-map-marker-alt"></i> {{ experience.location }}<br>
+                  <i class="fas fa-map-marker-alt" style="color: rgb(187, 27, 27);"></i> {{ experience.location }}<br>
                 {% endif %}
                 <i class="fas fa-calendar-alt"></i> {{ experience.from_date }}{% if experience.to_date %} - {{ experience.to_date }}{% else %} (Present){% endif %}
               </p>

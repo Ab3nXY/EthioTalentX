@@ -54,7 +54,11 @@ def profile_detail(request, pk):
 
 @login_required
 def dashboard(request):
-  return render(request, 'account/dashboard.html')
+    user = request.user
+    context = {
+        'user': user,
+    }
+    return render(request, 'account/dashboard.html', context)
 
 def profiles(request):
     """

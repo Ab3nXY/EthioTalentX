@@ -213,3 +213,56 @@ footer {
     }
 
   }
+
+  /* Custom card styling */
+.custom-card {
+  border: 1px solid #ddd; /* Add a border */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
+  margin-bottom: 20px; /* Add some bottom margin */
+  background-color: #ddd;
+}
+
+/* Custom card header styling */
+.custom-card-header {
+  padding: 10px 20px; /* Add padding */
+  border-bottom: 1px solid #ddd; /* Add a bottom border */
+  border-radius: 10px 10px 0 0; /* Rounded corners only at the top */
+}
+
+/* Custom card title styling */
+.custom-card-title {
+  margin-bottom: 0; /* Remove bottom margin for the title */
+}
+
+/* Custom card body styling */
+.custom-card-body {
+  padding: 20px; /* Add padding */
+}
+
+/* Style links within the custom card body */
+.custom-card-body a {
+  color: #007bff; /* Set link color */
+}
+
+/* Style unordered list within the custom card body */
+.custom-card-body ul {
+  list-style-type: none; /* Remove list bullets */
+  padding-left: 0; /* Remove left padding */
+}
+
+/* Style list items within the custom card body */
+.custom-card-body li {
+  margin-bottom: 5px; /* Add bottom margin to list items */
+}
+
+/* Style buttons within the custom card body */
+.custom-card-body .btn {
+  margin-right: 10px; /* Add right margin to buttons */
+}
+
+/* Hover effect for custom cards */
+.custom-card:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Add a larger shadow on hover */
+  transition: box-shadow 0.3s ease; /* Smooth transition */
+}
