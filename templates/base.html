@@ -11,15 +11,14 @@
     {% block extra_head %}
     {% endblock extra_head %}
 
-    <link rel="stylesheet" href="{% static 'css/bootstrap.min.css' %}" >
-    <link rel="stylesheet" href="{% static 'css/fontawesome-free-6.5.2-web/css/all.min.css' %}">
-    <link rel="stylesheet" href="{% static 'css/main.css' %}">
-    <link rel="stylesheet" href="{% static 'css/jquery-ui.css' %}">
-    <script src="https://code.jquery.com/jquery-3.6.0.min.js"></script>    
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/bootstrap/5.3.3/css/bootstrap.min.css" integrity="sha512-jnSuA4Ss2PkkikSOLtYs8BlYIeeIK1h99ty4YfvRPAlzr377vr3CXDb7sb7eEEBYjDtcYj+AjBH3FLv5uSJuXg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer/>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.2/css/all.min.css" integrity="sha512-SnH5WK+bZxgPHs44uWIX+LLJAJ9/2PkPKZ5QiAj6Ta86w+fsb2TkcmfRyVX3pBnMFcV7oQPJkl9QevSCWr3W6A==" crossorigin="anonymous" referrerpolicy="no-referrer" defer/>
+    <link rel="stylesheet" href="{% static 'css/main.css' %}" defer>
+    <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/jqueryui/1.13.3/themes/base/jquery-ui.min.css" integrity="sha512-8PjjnSP8Bw/WNPxF6wkklW6qlQJdWJc/3w/ZQPvZ/1bjVDkrrSqLe9mfPYrMxtnzsXFPc434+u4FHLnLjXTSsg==" crossorigin="anonymous" referrerpolicy="no-referrer" defer />
 
     <!-- Favicon-->
     <link rel="icon" type="image/png" sizes="32x32" href="{% static 'favicon/android-chrome-192x192.png' %}">
-    
+
 </head>
 <body>
     {% block BG %}{% endblock BG %}
@@ -39,7 +38,7 @@
                 <span class="navbar-toggler-icon"></span>
               </button>
               <div class="collapse navbar-collapse px-4 justify-content-end position-absolute" style="width: auto; right: 0;" id="navbarSupportedContent">
-              
+
                 <ul class="navbar-nav ms-auto mb-lg-0">
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'profiles' %}"><i class="fa-solid fa-users me-2" style="color: skyblue;"></i>Talent Hub</a>
@@ -60,7 +59,7 @@
             </div>
         </div>
     </nav>
-    
+
 {% if user.is_authenticated %}
 <!-- Sidebar -->
 <div class="sidebar" id="sidebar">
@@ -94,20 +93,20 @@
 
 </body>
 
-<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/jquery-3.6.0.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/bootstrap-datepicker.min.js' %}" type="text/javascript"></script>
-<script src="{% static 'js/jquery.min.js' %}" type="text/javascript"></script>
-    
-<script>
+<script src="{% static 'js/bootstrap.bundle.min.js' %}" type="text/javascript" defer></script>
+<script src="{% static 'js/jquery-3.6.0.min.js' %}" type="text/javascript" defer></script>
+<script src="https://cdnjs.cloudflare.com/ajax/libs/bootstrap-datepicker/1.10.0/js/bootstrap-datepicker.min.js" integrity="sha512-LsnSViqQyaXpD4mBBdRYeP6sRwJiJveh2ZIbW41EBrNmKxgr/LFZIiWT6yr+nycvhvauz8c2nYMhrP80YhG7Cw==" crossorigin="anonymous" referrerpolicy="no-referrer" defer></script>
+<script src="{% static 'js/jquery.min.js' %}" type="text/javascript" defer></script>
+
+<script defer>
     document.addEventListener("DOMContentLoaded", function() {
         const navbarToggler = document.querySelector(".navbar-toggler");
         const navbarCollapse = document.querySelector(".navbar-collapse");
-    
+
         navbarToggler.addEventListener("click", function() {
         navbarCollapse.classList.toggle("expanded");
         });
-    
+
         // Detect window resize and remove 'expanded' class from navbar collapse
         window.addEventListener("resize", function() {
         if (window.innerWidth >= 992) {
@@ -140,5 +139,5 @@
 <footer class="footer justify-content-end">
       <span class="text-muted">&copy; Copyright 2024 Created by Ab3nXY</span>
 </footer>
-  
+
 </html>

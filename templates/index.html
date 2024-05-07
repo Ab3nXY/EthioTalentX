@@ -1,25 +1,31 @@
 {% extends "base.html" %}
 
 {% block head_title %}
-    EthioTalentX
+  EthioTalentX
 {% endblock head_title %}
-{% block BG %}<div class="background-container">
+
+{% block BG %}
+  <div class="background-container">
     <div class="background-overlay"></div>
-    <div class="background-image"></div>{% endblock BG %}
+    <div class="background-image"></div>
+  </div>
+{% endblock BG %}
+
 {% block content %}
 {% if user.is_authenticated %}
-{% else %}
-<div class="container-fluid h-100d-flex flex-column justify-content-center" style="margin-top: 10%;">
+  {% else %}
+  <div class="container-fluid h-100 d-flex flex-column justify-content-center" style="margin-top: 10%;">
     <div class="row h-100 justify-content-center align-items-center">
-        <div class="col-md-9">
-            <main class="text-center" style="color: white;">
-                <h1 style="font-size: 4em; font-weight: bold;">EthioTalentX</h1>
-                <p style="font-size: 1.5em;">Craft your awesome profile, share posts, and team up with other top talents for a boost of creativity and support!</p>
-                <a href="{% url 'account_login' %}" class="btn btn-primary me-2">Login</a>
-                <a href="{% url 'account_signup' %}" class="btn btn-light">Sign Up</a>
-            </main>
-        </div>
+      <div class="col-md-9">
+        <main class="text-center" style="color: white;">
+
+          <h1 style="font-size: 3em; font-weight: bold;">EthioTalentX</h1>
+          <p>Craft your awesome profile, share posts, and team up with other top talents for a boost of creativity and support!</p>
+          <a href="{% url 'account_login' %}" class="btn btn-primary me-2">Login</a>
+          <a href="{% url 'account_signup' %}" class="btn btn-light">Sign Up</a>
+        </main>
+      </div>
     </div>
-</div>
+  </div>
 {% endif %}
 {% endblock content %}
