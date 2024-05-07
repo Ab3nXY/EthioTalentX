@@ -1,0 +1,29 @@
+{% load i18n %}
+{% load allauth %}
+{% load socialaccount %}
+
+{% get_providers as socialaccount_providers %}
+
+{% if socialaccount_providers %}
+  {% if not SOCIALACCOUNT_ONLY %}
+
+  {% endif %}
+
+  <div class="text-center mb-4 mt-4">
+    <p class="mb-0 text-white">Alternatively, use social accounts for authentication and registration below:</p>
+  </div>
+  
+  <div class="social-login-buttons d-flex justify-content-center me-4">
+    {% for provider in socialaccount_providers %}
+      {% if provider.id == 'google' or provider.id == 'github' %}
+        <a href="{% provider_login_url provider.id %}" class="social-login-card btn btn-outline-primary me-4">
+          <i class="fab fa-{% if provider.id == 'google' %}google text-danger{% else %}github text-white{% endif %}"></i>
+          {{ provider.name }}
+        </a>
+      {% endif %}
+    {% endfor %}
+  </div>
+  
+  
+
+{% endif %}
