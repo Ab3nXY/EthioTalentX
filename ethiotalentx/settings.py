@@ -73,6 +73,7 @@ class Dev(Configuration):
         'allauth.socialaccount.providers.google',
         'crispy_forms',
         'crispy_bootstrap5',
+        'donations'
     ]
 
     MIDDLEWARE = [
@@ -190,6 +191,10 @@ class Dev(Configuration):
     # https://docs.djangoproject.com/en/5.0/ref/settings/#default-auto-field
 
     DEFAULT_AUTO_FIELD = 'django.db.models.BigAutoField'
+
+    STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
+    STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+
 
 class Prod(Dev):
 
