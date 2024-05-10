@@ -59,11 +59,13 @@ class Dev(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
+        'chat.apps.ChatConfig',
         'django.contrib.admin',
         'django.contrib.auth',
         'django.contrib.contenttypes',
         'django.contrib.sessions',
         'django.contrib.messages',
+        'daphne',
         'django.contrib.staticfiles',
         'accounts',
         'allauth',
@@ -73,7 +75,8 @@ class Dev(Configuration):
         'allauth.socialaccount.providers.google',
         'crispy_forms',
         'crispy_bootstrap5',
-        'donations'
+        'donations',
+        'channels',
     ]
 
     MIDDLEWARE = [
@@ -123,7 +126,7 @@ class Dev(Configuration):
     }
 
     WSGI_APPLICATION = 'ethiotalentx.wsgi.application'
-
+    ASGI_APPLICATION = 'ethiotalentx.asgi.application'
 
     # Database
     # https://docs.djangoproject.com/en/5.0/ref/settings/#databases
@@ -194,6 +197,14 @@ class Dev(Configuration):
 
     STRIPE_SECRET_KEY = os.getenv('STRIPE_SECRET_KEY')
     STRIPE_PUBLISHABLE_KEY = os.getenv('STRIPE_PUBLISHABLE_KEY')
+    
+    # for chat app
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels.layers.InMemoryChannelLayer"
+        }
+    }
+
 
 
 class Prod(Dev):
