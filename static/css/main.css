@@ -267,4 +267,50 @@ footer {
   transition: box-shadow 0.3s ease; /* Smooth transition */
 }
 
+.chat__modal {
+  display: none; 
+  position: fixed; 
+  bottom: 20px; 
+  right: 20px;
+  z-index: 1000;
+}
+
+.chat__modal-content {
+  background-color: #fefefe;
+  border: 1px solid #888;
+  width: 300px;
+}
+
+.chat__modal-header {
+  padding: 10px;
+  background-color: #f5f5f5;
+  color: #333;
+  border-bottom: 1px solid #ddd;
+}
+
+.chat__modal-header h2 {
+  margin: 0;
+}
+
+.chat__modal-body {
+  padding: 10px;
+}
+
+.close {
+  float: right;
+  cursor: pointer;
+}
+
+.chat__input-container {
+  display: flex;
+  align-items: center;
+}
+
+#id_message_send_input {
+  flex: 1; /* Makes the input field expand to fill most of the space */
+  margin-right: 10px; /* Optional spacing between input and button */
+}
+
+
+
 

@@ -1,22 +1,31 @@
-<!DOCTYPE html>
-<html>
-  <body>
-    <center><h1>Hello , Welcome to my chat site ! {{request.user}}</h1></center>
-    <br>
-    {% if request.user.is_authenticated  %}
-    <center> Logout the chat Page <a href = "{% url 'logout-user' %}">Logout</a></center>
-    {% endif %}
-    <div
-      class="chat__item__container"
-      id="id_chat_item_container"
-      style="font-size: 20px"
-    >
-      <br />
-      <input type="text" id="id_message_send_input" />
-      <button type="submit" id="id_message_send_button">Send Message</button>
-      <br />
-      <br />
+<!-- chatPage.html -->
+
+<div class="chat__modal" id="chatModal">
+  <div class="chat__modal-content">
+    <div class="chat__modal-header">
+      <span class="close">&times;</span>
+      <h2>Messages</h2>
     </div>
+    <div class="chat__modal-body" style="height: 50vh;">
+      <div class="chat__item__container" id="id_chat_item_container">
+        <!-- Display previous chat messages -->
+        {% for message in chat_messages %}
+          <div>{{ message.sender.username }}: {{ message.message }}</div>
+        {% endfor %}
+      </div>
+      <div class="chat__input-container">
+        <form method="post">
+          {% csrf_token %}
+          <input type="text" name="message" id="id_message_send_input" />
+          <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane"></i></button>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+
+    
     <script>
       const chatSocket = new WebSocket("ws://" + window.location.host + "/");
       chatSocket.onopen = function (e) {
@@ -44,6 +53,9 @@
         document.querySelector("#id_message_send_input").value = "";
         document.querySelector("#id_chat_item_container").appendChild(div);
       };
+
+      document.querySelector(".close").onclick = function() {
+        document.querySelector('.chat__modal').style.display = "none";
+      }
     </script>
-  </body>
-</html>
+

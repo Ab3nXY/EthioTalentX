@@ -10,7 +10,7 @@ def donate_with_product(request):
         checkout_session = stripe.checkout.Session.create(
             line_items=[
                 {
-                    "price": "price_1PEEkEDnw0ite3t6mb2I1ZtA",  # enter yours here!!!
+                    "price": "price_1PFIdMDnw0ite3t66PCeyw4v",  # enter yours here!!!
                     "quantity": 1,
                 }
             ],
