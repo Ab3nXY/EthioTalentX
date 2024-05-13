@@ -28,6 +28,8 @@
     
     <script>
       const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+      const userPk = document.querySelector("#openChatModal").dataset.userPk;
+
       chatSocket.onopen = function (e) {
         console.log("The connection was setup successfully !");
       };
@@ -44,7 +46,11 @@
         var messageInput = document.querySelector(
           "#id_message_send_input"
         ).value;
-        chatSocket.send(JSON.stringify({ message: messageInput, username : "{{request.user.username}}"}));
+        chatSocket.send(JSON.stringify({ 
+          message: messageInput, 
+          username : "{{request.user.username}}",
+          room_id: userPk
+        }));
       };
       chatSocket.onmessage = function (e) {
         const data = JSON.parse(e.data);
