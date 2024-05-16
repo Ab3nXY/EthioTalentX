@@ -97,7 +97,10 @@
     {% endif %}
     {% block content %}
     {% endblock content %}
-    {% include 'chat/chatPage.html' %}
+    {% if request.user.is_authenticated %}
+        {% include 'chat/chatPage.html' %}
+    {% endif %}
+
 
 </body>
 
@@ -165,24 +168,12 @@
     wiggleButton();
     }
 
-    document.addEventListener('DOMContentLoaded', function () {
-        // Open the chat modal when the chat icon is clicked
-        document.getElementById('openChatModal').addEventListener('click', function () {
-            document.getElementById('chatModal').style.display = 'block';
-        });
-
-        // Close the chat modal when the close button is clicked
-        document.querySelector(".close").onclick = function () {
-            document.getElementById('chatModal').style.display = 'none';
-        };
-    });
-
     </script>
 
     {% block extrascripts %}
     {% endblock extrascripts %}
 
-<footer class="footer justify-content-end">
+<footer class="footer justify-content-start">
       <span class="text-muted">&copy; Copyright 2024 Created by Ab3nXY</span>
 </footer>
 

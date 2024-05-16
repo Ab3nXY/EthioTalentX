@@ -2,66 +2,100 @@
 
 <div class="chat__modal" id="chatModal">
   <div class="chat__modal-content">
-    <div class="chat__modal-header">
-      <span class="close">&times;</span>
-      <h2>Messages</h2>
+    <div class="chat__modal-header" onclick="toggleChatModal()">
+        <img src="{{ request.user.profile.image.url }}" alt="Profile Picture" class="profile-pic me-2" style="width: 40px; border-radius: 50%;">
+        <p style="margin: 0;">Messaging</p>
     </div>
-    <div class="chat__modal-body" style="height: 50vh;">
+   <hr style="margin: 0;">
+    <div class="chat__modal-body" id="chatModalBody" style="display: none;">
       <div class="chat__item__container" id="id_chat_item_container">
         <!-- Display previous chat messages -->
         {% for message in chat_messages %}
-          <div>{{ message.sender.username }}: {{ message.message }}</div>
+          <div>{{ message.sender.username }} {% if message.receiver %} to {{ message.receiver.username }} {% endif %}: {{ message.message }}</div>
         {% endfor %}
       </div>
       <div class="chat__input-container">
-        <form method="post">
+        <form id="chatForm" method="post">
           {% csrf_token %}
           <input type="text" name="message" id="id_message_send_input" />
           <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane"></i></button>
         </form>
       </div>
+      {% if can_clear_chat %}
+      <div class="chat__clear-container">
+        <a href="?clear_chat=true">Clear Chat</a>
+      </div>
+      {% endif %}
     </div>
   </div>
 </div>
 
+<script>
+  const chatModal = document.getElementById("chatModal");
+  const chatModalBody = document.getElementById("chatModalBody");
+  let expanded = false;
 
-    
-    <script>
-      const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-      const userPk = document.querySelector("#openChatModal").dataset.userPk;
+  function toggleChatModal() {
+    expanded = !expanded;
+    if (expanded) {
+      chatModalBody.style.height = "50vh"; // Expand the modal body
+      chatModalBody.style.display = "block";
+    } else {
+      chatModalBody.style.height = "0"; // Collapse the modal body
+      chatModalBody.style.display = "none";
+    }
+  }
 
-      chatSocket.onopen = function (e) {
-        console.log("The connection was setup successfully !");
-      };
-      chatSocket.onclose = function (e) {
-        console.log("Something unexpected happened !");
-      };
-      document.querySelector("#id_message_send_input").focus();
-      document.querySelector("#id_message_send_input").onkeyup = function (e) {
-        if (e.keyCode == 13) {
-          document.querySelector("#id_message_send_button").click();
-        }
-      };
-      document.querySelector("#id_message_send_button").onclick = function (e) {
-        var messageInput = document.querySelector(
-          "#id_message_send_input"
-        ).value;
-        chatSocket.send(JSON.stringify({ 
-          message: messageInput, 
-          username : "{{request.user.username}}",
-          room_id: userPk
-        }));
-      };
-      chatSocket.onmessage = function (e) {
-        const data = JSON.parse(e.data);
-        var div = document.createElement("div");
-        div.innerHTML = data.username + " : " + data.message;
-        document.querySelector("#id_message_send_input").value = "";
-        document.querySelector("#id_chat_item_container").appendChild(div);
-      };
+  const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+  const userPk = "{{ request.user.pk }}"; // Ensure to get the user's primary key
 
-      document.querySelector(".close").onclick = function() {
-        document.querySelector('.chat__modal').style.display = "none";
-      }
-    </script>
+  chatSocket.onopen = function (e) {
+    console.log("The connection was set up successfully!");
+  };
 
+  chatSocket.onclose = function (e) {
+    console.log("Something unexpected happened!");
+  };
+
+  document.querySelector("#id_message_send_input").focus();
+  document.querySelector("#id_message_send_input").onkeyup = function (e) {
+    if (e.keyCode == 13) {
+      document.querySelector("#id_message_send_button").click();
+    }
+  };
+
+  document.querySelector("#chatForm").onsubmit = function (e) {
+    e.preventDefault(); // Prevent form submission
+    var messageInput = document.querySelector("#id_message_send_input").value;
+    chatSocket.send(JSON.stringify({
+      message: messageInput,
+      username: "{{ request.user.username }}",
+      room_id: userPk
+    }));
+    document.querySelector("#id_message_send_input").value = ""; // Clear input after sending
+  };
+
+  chatSocket.onmessage = function (e) {
+    const data = JSON.parse(e.data);
+    var div = document.createElement("div");
+    div.textContent = data.username + " : " + data.message; // Use textContent instead of innerHTML for security
+    document.querySelector("#id_chat_item_container").appendChild(div);
+  };
+
+  document.addEventListener('DOMContentLoaded', function() {
+    const chatIcons = document.querySelectorAll('.openChatModal');
+
+    chatIcons.forEach(chatIcon => {
+      chatIcon.addEventListener('click', (event) => {
+        const clickedUserPk = event.currentTarget.dataset.userPk;
+        openChatModal(clickedUserPk);
+      });
+    });
+
+    function openChatModal(userPk) {
+      // Update chat functionality with the clicked user's primary key (userPk)
+      // ... (modify message sending and potentially message retrieval)
+      document.querySelector('.chat__modal').style.display = "block";
+    }
+  });
+</script>
