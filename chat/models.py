@@ -11,7 +11,7 @@ class ChatRoom(models.Model):
 
 class ChatMessage(models.Model):
     sender = models.ForeignKey(User, on_delete=models.CASCADE, related_name='sent_messages')
-    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages', default='')
+    receiver = models.ForeignKey(User, on_delete=models.CASCADE, related_name='received_messages')
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages', default='')
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)

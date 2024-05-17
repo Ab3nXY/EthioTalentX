@@ -268,12 +268,18 @@ footer {
 }
 
 .chat__modal {
-  position: fixed; 
+  position: fixed;
+  display: none;
   bottom: 0px; 
-  right: 20px;
+  right: 350px;
   z-index: 1000;
 }
-
+.chat__modal_list {
+  position: fixed; 
+  bottom: 0px; 
+  right: 10px;
+  z-index: 1000;
+}
 .chat__modal-content {
   background-color: rgb(238, 238, 238);
   border: 1px solid rgb(210, 210, 210);
@@ -287,6 +293,15 @@ footer {
   align-items: center; 
   cursor: pointer;
   margin: 5px; 
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 20px;
+  cursor: pointer;
+  color: #777;
+  margin-left: auto; 
 }
 
 .chat__modal-body {

@@ -35,12 +35,14 @@
               <a href="{% url 'profile_detail' pk=profile.pk %}" class="btn btn-primary" style="display: inline-block;">View Profile</a>
             </div>
                 <!-- Chat icon -->
-                <div style="font-size: larger;">
-                  <a href="#" class="openChatModal" data-user-pk="{{ user_to_chat.pk }}">
-                    <i class="fas fa-comment"></i>
-                  </a>
+                {% if user.is_authenticated and profile.user != request.user %}
+                <div class="col-md-8">
+                  <button type="button" class="btn btn-info btn-sm mx-2" 
+                          data-user-pk="{{ profile.pk}}"  onclick="openChatModal(this.dataset.userPk)">
+                          <i class="far fa-paper-plane"></i> Message
+                  </button>
                 </div>
-                
+                {% endif %}
           </div>
 
           <div class="col-md-12 profile-skills list-group list-group-flush"> 

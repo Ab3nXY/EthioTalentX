@@ -59,6 +59,7 @@ class Dev(Configuration):
     # Application definition
 
     INSTALLED_APPS = [
+        'channels',
         'chat.apps.ChatConfig',
         'django.contrib.admin',
         'django.contrib.auth',
@@ -76,7 +77,7 @@ class Dev(Configuration):
         'crispy_forms',
         'crispy_bootstrap5',
         'donations',
-        'channels',
+        
     ]
 
     MIDDLEWARE = [

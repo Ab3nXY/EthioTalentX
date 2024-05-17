@@ -49,8 +49,31 @@ def profile(request):
 
 def profile_detail(request, pk):
     profile = get_object_or_404(Profile, pk=pk)
-    context = {'profile': profile}
-    return render(request, 'account/profile_detail.html', context)
+    
+    if request.headers.get('accept') == 'application/json':
+        # Serialize profile data into a dictionary
+        profile_data = {
+            'id': profile.pk,
+            'user_id': profile.user.id,
+            'username': profile.user.username,
+            'email': profile.user.email,
+            'company': profile.company,
+            'website': profile.website,
+            'location': profile.location,
+            'bio': profile.bio,
+            'githubusername': profile.githubusername,
+            'date': profile.date.strftime('%Y-%m-%d %H:%M:%S'),
+            'image_url': profile.image.url if profile.image else '',
+            'occupation': profile.occupation,
+            'skills': list(profile.skills.values_list('name', flat=True))
+        }
+        
+        # Return JSON response
+        return JsonResponse(profile_data)
+    else:
+        # Render template for HTML response
+        context = {'profile': profile}
+        return render(request, 'account/profile_detail.html', context)
 
 @login_required
 def dashboard(request):

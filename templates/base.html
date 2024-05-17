@@ -99,6 +99,7 @@
     {% endblock content %}
     {% if request.user.is_authenticated %}
         {% include 'chat/chatPage.html' %}
+        {% include 'chat/chat_list.html' %}
     {% endif %}
 
 
