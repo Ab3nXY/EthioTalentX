@@ -8,38 +8,46 @@ from accounts.models import Profile
 from .models import ChatMessage
 from django.shortcuts import get_object_or_404
 from django.db.models import Q
+from django.views.decorators.http import require_POST 
+import json
 
 @login_required
 def user_detail(request, user_pk):
-    profile = get_object_or_404(Profile, pk=user_pk)
+    print(f"Fetching details for user with PK: {user_pk}")  # Debug statement
+    user = get_object_or_404(User, pk=user_pk)
+    print(f"User found: {user.username}")  # Debug statement
+    profile = get_object_or_404(Profile, user=user)
+    print(f"Profile found for user: {profile}")  # Debug statement
     user_data = {
-        'id': profile.user.id,
-        'username': profile.user.username,
-        'email': profile.user.email,
-        'company': profile.company,
-        'website': profile.website,
-        'location': profile.location,
-        'bio': profile.bio,
-        'githubusername': profile.githubusername,
-        'date': profile.date.strftime('%Y-%m-%d %H:%M:%S'),
-        'image_url': profile.image.url if profile.image else '',
-        'occupation': profile.occupation,
-        'skills': list(profile.skills.values_list('name', flat=True))
+        'id': user.id,
+        'username': user.username,
+        'image': request.build_absolute_uri(profile.image.url) if profile.image else '',
+        'email': user.email,
+        'first_name': user.first_name,
+        'last_name': user.last_name,
     }
+    print(f"User data to be returned: {user_data}")  # Debug statement
     return JsonResponse(user_data)
 
 @login_required
-def messages_detail(request, user_pk):
+def messages_detail(request, user_pk, room_id):
     user_to_chat_with = get_object_or_404(User, pk=user_pk)
+    current_user = request.user
     
-    # Fetch messages between the current user (request.user) and user_to_chat_with
-    chat_messages = ChatMessage.objects.filter(
-        (Q(sender=request.user) & Q(receiver=user_to_chat_with)) |
-        (Q(sender=user_to_chat_with) & Q(receiver=request.user))
-    ).order_by('timestamp')
+    # Debug statements
+    print(f"Current User: {current_user.username} (ID: {current_user.id})")
+    print(f"Chatting with: {user_to_chat_with.username} (ID: {user_to_chat_with.id})")
+    print(f"Chat room = {room_id}")
+    
+    # Fetch chat room based on room_id
+    chat_room = get_object_or_404(ChatRoom, pk=room_id)
+    
+    # Fetch messages for the chat room
+    chat_messages = ChatMessage.objects.filter(room=chat_room).order_by('timestamp')
     
     messages_data = []
     for message in chat_messages:
+        print(f"Message from {message.sender.username} to {message.receiver.username}: {message.message}")
         message_data = {
             'sender_id': message.sender.id,
             'sender_username': message.sender.username,
@@ -51,6 +59,7 @@ def messages_detail(request, user_pk):
         messages_data.append(message_data)
     
     return JsonResponse(messages_data, safe=False)
+
 
 @login_required
 def chatPage(request, *args, **kwargs):
@@ -141,3 +150,45 @@ def chat_list(request):
         'user_chat_rooms': user_chat_rooms,
     }
     return render(request, "chat/chat_list.html", context)
+
+@login_required
+@require_POST
+def create_chat_room(request):
+    data = json.loads(request.body)
+    user_id_1 = data.get('user_id_1')
+    user_id_2 = data.get('user_id_2')
+
+    if not user_id_1 or not user_id_2:
+        return JsonResponse({'error': 'Invalid user_id provided'}, status=400)
+
+    # Fetch the users to chat with
+    user1 = get_object_or_404(User, pk=user_id_1)
+    user2 = get_object_or_404(User, pk=user_id_2)
+
+    # Ensure the chat room doesn't already exist between these two users
+    existing_chat_room = ChatRoom.objects.filter(users=user1).filter(users=user2).first()
+    if existing_chat_room:
+        return JsonResponse({'room_id': existing_chat_room.pk})
+
+    # Generate room name based on usernames (example: concatenation)
+    room_name = f"{user1.username}_{user2.username}"
+
+    # Create a new chat room
+    chat_room = ChatRoom.objects.create(name=room_name)
+
+    # Add users to the chat room
+    chat_room.users.add(user1, user2)
+    chat_room.save()
+
+    return JsonResponse({'room_id': chat_room.pk})
+
+
+@login_required
+def check_chat_room(request, user_id):
+    user_to_chat_with = get_object_or_404(User, pk=user_id)
+    chat_room = ChatRoom.objects.filter(users=request.user).filter(users=user_to_chat_with).first()
+    if chat_room:
+        return JsonResponse({'exists': True, 'room_id': chat_room.pk})
+    else:
+        return JsonResponse({'exists': False})
+

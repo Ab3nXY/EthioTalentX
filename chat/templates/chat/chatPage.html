@@ -1,72 +1,86 @@
 <!-- Chat Modal -->
 <div class="chat__modal" id="chatModal">
-  <div class="chat__modal-content">
-      <div class="chat__modal-header" onclick="toggleChatModal()">
-              <img src="{{ user.profile.image.url }}" alt="Profile Picture" class="profile-pic me-2"  style="width: 40px; border-radius: 50%;">
-              <p style="margin: 0;">{{ user_data.user.first_name }}</p>
-          <button class="close-button" onclick="closeChatModal()">&times;</button>
-      </div>
-      <hr style="margin: 0;">
-      <div class="chat__modal-body" id="chatModalBody" style="display: none;">
-          <div class="chat__item__container" id="id_chat_item_container">
-              <!-- Display previous chat messages -->
-              {% for message in chat_messages %}
-                  <div>{{ message.sender.username }} {% if message.receiver %} to {{ message.receiver.username }} {% endif %}: {{ message.message }}</div>
-              {% endfor %}
-          </div>
-          <div class="chat__input-container">
-              <form id="chatForm" method="post">
-                  {% csrf_token %}
-                  <input type="text" name="message" id="id_message_send_input" />
-                  <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane"></i></button>
-              </form>
-          </div>
-          {% if can_clear_chat %}
-          <div class="chat__clear-container">
-              <a href="?clear_chat=true">Clear Chat</a>
-          </div>
-          {% endif %}
-      </div>
+    <div class="chat__modal-content">
+        <div class="chat__modal-header" onclick="toggleChatModal()">
+            <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 40px; border-radius: 50%;">
+            <p id="chatUserName" style="margin: 0;"></p>
+            <button type="button" class="close-button" onclick="closeChatModal()">&times;</button>
+        </div>
+        <hr style="margin: 0;">
+        <div class="chat__modal-body" id="chatModalBody">
+            <div class="chat__item__container" id="id_chat_item_container">
+                {% for message in chat_messages %}
+                    <div>{{ message.sender.username }}{% if message.receiver %} to {{ message.receiver.username }}{% endif %}: {{ message.message }}</div>
+                {% endfor %}
+            </div>
+            <div class="chat__input-container">
+              <form id="chatForm">
+                <input type="text" id="id_message_send_input" name="message" placeholder="Type your message..." />
+                <input type="hidden" id="receiverUserPk" value=""/>
+                <input type="hidden" id="chat_room_pk" value=""/>
+                <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane"></i></button>
+            </form>
+            </div>
+            {% if can_clear_chat %}
+            <div class="chat__clear-container">
+                <a href="?clear_chat=true">Clear Chat</a>
+            </div>
+            {% endif %}
+        </div>
+    </div>
   </div>
-  <input type="hidden" id="receiverUserPk" name="receiverUserPk" />
-  <input type="hidden" id="roomId" name="roomId" value="{{ chat_room_id }}" />
-</div>
 
-<!-- Chat List (assuming it's at the bottom right corner) -->
-<div class="chat__list" id="chatList">
-  <!-- Display latest chat rooms -->
-  {% for room in user_chat_rooms %}
-      <div class="chat__room">
-          <a href="{% url 'chat_page' username=room.other_user.username %}" class="openChatModal">
-              <div class="chat__room-title">{{ room.other_user.username }}</div>
-              <!-- Add more details as needed -->
-          </a>
-      </div>
-  {% endfor %}
-</div>
-  
 <script>
-// WebSocket initialization and event handling
+// Initialize WebSocket
 const chatSocket = new WebSocket("ws://" + window.location.host + "/");
-const userPk = "{{ request.user.pk }}";
 
-chatSocket.onopen = function (e) {
-    console.log("WebSocket connection opened successfully!");
-};
+document.addEventListener('DOMContentLoaded', () => {
+    document.querySelectorAll('.openChatModal').forEach(chatIcon => {
+        chatIcon.addEventListener('click', (event) => {
+            const clickedUserPk = event.currentTarget.dataset.userPk;
+            const currentUserId = event.currentTarget.dataset.userId;
+            console.log("Chat icon clicked");
+            console.log("Clicked user PK:", clickedUserPk);
+            console.log("Current user ID:", currentUserId);
+            openChatModal(clickedUserPk, currentUserId);
+        });
+    });
 
-chatSocket.onclose = function (e) {
-    console.log("WebSocket connection closed unexpectedly!");
-};
+    document.querySelector("#chatForm").addEventListener('submit', (e) => {
+        e.preventDefault();
+        const messageInput = document.querySelector("#id_message_send_input").value.trim();
+        const receiverUserPk = document.querySelector("#receiverUserPk").value;
+        const roomId = document.querySelector("#chat_room_pk").value;
+        console.log("Form submitted");
+        console.log("Message input:", messageInput);
+        console.log("Receiver user PK:", receiverUserPk);
+        console.log("Chat room ID:", roomId);
+        if (messageInput && receiverUserPk && roomId) {
+            sendMessage(messageInput, receiverUserPk, roomId);
+        } else {
+            console.error("Missing message input, receiver user PK, or chat room ID");
+        }
+    });
+});
 
-// Focus on the message input field when page loads
-document.querySelector("#id_message_send_input").focus();
-
-// Automatically send message on Enter key press
-document.querySelector("#id_message_send_input").onkeyup = function (e) {
-    if (e.keyCode == 13) {
-        document.querySelector("#id_message_send_button").click();
+// Function to send message via WebSocket
+function sendMessage(message, receiverPk, roomId) {
+    console.log("Preparing to send message");
+    console.log("Message:", message);
+    console.log("Receiver PK:", receiverPk);
+    console.log("Room ID:", roomId);
+    if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
+        chatSocket.send(JSON.stringify({
+            message: message,
+            receiver_id: receiverPk,
+            roomId: roomId
+        }));
+        document.querySelector("#id_message_send_input").value = "";
+    } else {
+        console.error("WebSocket is not open");
     }
-};
+}
+
 
 // Toggle chat modal body height
 const chatModal = document.getElementById("chatModal");
@@ -75,107 +89,126 @@ let expanded = false;
 
 function toggleChatModal() {
     expanded = !expanded;
-    if (expanded) {
-        chatModalBody.style.height = "50vh"; // Expand the modal body
-        chatModal.style.display = "block";
-        chatModalBody.style.display = "block";
-        chatModal.style.right= `350px`;
-    } else {
-        chatModalBody.style.height = "0"; // Collapse the modal body
-        chatModalBody.style.display = "none";
-    }
+    chatModalBody.style.height = expanded ? "50vh" : "0";
+    chatModal.style.display = expanded ? "block" : "none";
+    chatModalBody.style.display = expanded ? "block" : "none";
+    if (expanded) chatModal.style.right = `350px`;
 }
 
-// Open chat modal function with user data
-function openChatModal(userPk) {
-    // Fetch user details
-    fetch(`/api/user/${userPk}/`)
-        .then(response => response.json())
-        .then(data => {
-            console.log('user data', data);  // Debugging: log retrieved user data
+function openChatModal(userPk, userId) {
+    console.log("Opening chat modal with User PK:", userPk, "User ID:", userId);
+    document.querySelector("#receiverUserPk").value = userPk;
+    document.querySelector("#chat_room_pk").value = ""; // Reset chat room ID
 
-            // Update modal with user data
-            const profilePic = document.querySelector(".profile-pic");
-            const usernameElement = document.querySelector(".chat__modal-header p");
+    Promise.all([
+        fetch(`/api/user/${userPk}/`).then(response => response.json()),
+        fetch(`/api/check-chat-room/${userPk}/`).then(response => response.json())
+    ])
+    .then(([userData, chatRoomData]) => {
+        console.log("Fetched user data:", userData);  // Debug statement
+        console.log("Fetched chat room data:", chatRoomData);  // Debug statement
+        
+        // Ensure room_id is correctly extracted from chatRoomData
+        const roomId = chatRoomData.room_id;
+        console.log("Room ID:", roomId);
 
-            if (data.image_url) {
-                profilePic.src = data.image_url;  // Update profile picture if available
-                profilePic.style.display = "block";
-            } else {
-                profilePic.style.display = "none";  // Hide profile picture if not available
-            }
+        // Update modal header with user data
+        document.querySelector("#chat_room_pk").value = roomId;
+        document.querySelector("#chatProfilePic").src = userData.image;
+        document.querySelector("#chatUserName").textContent = userData.first_name;
 
-            usernameElement.textContent = data.username;  // Update username
+        if (chatRoomData.exists) {
+            loadChatRoomMessages(userId, roomId);
+        } else {
+            createChatRoom(userPk, userId);
+        }
+        toggleChatModal();
+    })
+    .catch(error => console.error('Error fetching user details or chat room data:', error));
+}
 
-            // Display chat modal
-            toggleChatModal();
+function createChatRoom(userPk, userId) {
+    console.log("Creating new chat room with user IDs:", userPk, userId);
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+    fetch(`/api/create-chat-room/`, {
+        method: 'POST',
+        headers: {
+            'Content-Type': 'application/json',
+            'X-CSRFToken': csrfToken
+        },
+        body: JSON.stringify({
+            user_id_1: userId, // Correcting the parameter usage
+            user_id_2: userPk
         })
-        .catch(error => {
-            console.error('Error fetching user details:', error);
-            // Handle errors, e.g., show an error message in the modal
-        });
-
-    // Fetch messages (if needed)
-    // This part can be updated similarly to fetch and display messages
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        document.querySelector("#chat_room_pk").value = data.room_id;
+        console.log("New chat room created:", data.room_id);
+        loadChatRoomMessages(data.room_id);
+    })
+    .catch(error => console.error('Error creating chat room:', error));
 }
 
+// Function to load messages for a specific chat room (using user_pk and room_id)
+function loadChatRoomMessages(userId, roomId) {
+    console.log("Loading messages for user:", userId, "and room:", roomId);
+    fetch(`/api/messages/${userId}/${roomId}/`)
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(messages => {
+            console.log("Fetched messages:", messages);  // Debug statement
+            displayMessages(messages,userId);
+        })
+        .catch(error => console.error('Error fetching messages:', error));
+}
+
+// Function to display messages received from the backend
+function displayMessages(messages,userId) {
+    const chatMessagesContainer = document.querySelector("#id_chat_item_container");
+    chatMessagesContainer.innerHTML = '';  // Clear existing messages
+
+    messages.forEach(message => {
+        const messageElement = document.createElement("div");
+        messageElement.classList.add("chat-message");
+
+        // Determine message sender
+        const isMyMessage = message.sender_id === userId;  // Assuming UserId is defined somewhere
+
+        // Construct message HTML
+        messageElement.innerHTML = `
+            <div>${message.sender_username}: ${message.message}</div>
+        `;
+        
+        // Append message element to container
+        chatMessagesContainer.appendChild(messageElement);
+    });
+}
 
 // Function to close chat modal
 function closeChatModal() {
     chatModal.style.display = "none";
 }
 
-// Event listener for close button
-document.querySelector(".close-button").addEventListener('click', closeChatModal);
-
-// Form submission for sending messages
-document.querySelector("#chatForm").onsubmit = function (e) {
-    e.preventDefault(); // Prevent form submission
-
-    var messageInput = document.querySelector("#id_message_send_input").value;
-    var receiverUserPk = document.querySelector("#receiverUserPk").value; // Get the receiver userPk
-    var room_id = document.querySelector("#roomId").value; // Get the room ID
-
-    console.log("Sending message:", messageInput, " to user:", receiverUserPk, " in room:", room_id);
-
-    // Send message via WebSocket
-    chatSocket.send(JSON.stringify({
-        message: messageInput,
-        username: "{{ request.user.username }}",
-        receiver_id: receiverUserPk,
-        room_id: room_id
-    }));
-
-    document.querySelector("#id_message_send_input").value = ""; // Clear input after sending
-};
-
-// Event listener for opening chat modal from chat list
-document.addEventListener('DOMContentLoaded', function() {
-    const chatIcons = document.querySelectorAll('.openChatModal');
-
-    chatIcons.forEach(chatIcon => {
-        chatIcon.addEventListener('click', (event) => {
-            const clickedUserPk = event.currentTarget.dataset.userPk;
-            openChatModal(clickedUserPk);
-        });
-    });
-});
-
-// WebSocket message reception
-chatSocket.onmessage = function (e) {
-    console.log("Received message through WebSocket!");
+// WebSocket event listeners
+chatSocket.onopen = () => console.log("WebSocket connection opened!");
+chatSocket.onclose = () => console.log("WebSocket connection closed!");
+chatSocket.onmessage = (e) => {
     const data = JSON.parse(e.data);
-    console.log("Message data:", data);
-    
-    // Create a new chat message element
-    var messageElement = document.createElement("div");
+    const messageElement = document.createElement("div");
     messageElement.textContent = `${data.username}: ${data.message}`;
-    
-    // Append the message element to the chat body container
-    var chatBodyContainer = document.querySelector("#id_chat_item_container");
+    const chatBodyContainer = document.querySelector("#id_chat_item_container");
     chatBodyContainer.appendChild(messageElement);
+    chatBodyContainer.scrollTop = chatBodyContainer.scrollHeight;
 };
 
-  </script>
-  
-  
+</script>

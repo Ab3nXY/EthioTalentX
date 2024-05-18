@@ -38,8 +38,10 @@
                 {% if user.is_authenticated and profile.user != request.user %}
                 <div class="col-md-8">
                   <button type="button" class="btn btn-info btn-sm mx-2" 
-                          data-user-pk="{{ profile.pk}}"  onclick="openChatModal(this.dataset.userPk)">
-                          <i class="far fa-paper-plane"></i> Message
+                      data-user-pk="{{ profile.user.pk }}"
+                      data-user-id="{{ request.user.pk }}"
+                      onclick="openChatModal(this.dataset.userPk, this.dataset.userId)">
+                      <i class="far fa-paper-plane"></i> Message
                   </button>
                 </div>
                 {% endif %}
