@@ -89,17 +89,28 @@ let expanded = false;
 
 function toggleChatModal() {
     expanded = !expanded;
-    chatModalBody.style.height = expanded ? "50vh" : "0";
-    chatModal.style.display = expanded ? "block" : "none";
-    chatModalBody.style.display = expanded ? "block" : "none";
-    if (expanded) chatModal.style.right = `350px`;
+    if (expanded) {
+        chatModalBody.style.height = "50vh"; // Expand the modal body
+        chatModal.style.display = "block";
+        chatModalBody.style.display = "block";
+        chatModal.style.right= `350px`;
+    } else {
+        chatModalBody.style.height = "0"; // Collapse the modal body
+        chatModalBody.style.display = "none";
+    }
 }
+
+// Function to close chat modal
+function closeChatModal(event) {
+        chatModal.style.display = "none";
+}
+
 
 function openChatModal(userPk, userId) {
     console.log("Opening chat modal with User PK:", userPk, "User ID:", userId);
     document.querySelector("#receiverUserPk").value = userPk;
     document.querySelector("#chat_room_pk").value = ""; // Reset chat room ID
-
+    
     Promise.all([
         fetch(`/api/user/${userPk}/`).then(response => response.json()),
         fetch(`/api/check-chat-room/${userPk}/`).then(response => response.json())
@@ -194,10 +205,7 @@ function displayMessages(messages,userId) {
     });
 }
 
-// Function to close chat modal
-function closeChatModal() {
-    chatModal.style.display = "none";
-}
+
 
 // WebSocket event listeners
 chatSocket.onopen = () => console.log("WebSocket connection opened!");
