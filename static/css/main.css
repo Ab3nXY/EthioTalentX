@@ -211,6 +211,22 @@ footer {
       transition: all 0.2s ease-in-out;
       border-radius: 5px;
     }
+    .chat__modal-content {
+      width: 90%; /* Adjust width for smaller screens */
+    }
+
+    .chat__modal-body {
+        max-height: calc(100vh - 200px); /* Adjust for smaller screens and input container height */
+    }
+
+    .chat__item__container {
+        max-height: 200px; /* Adjust maximum height for messages on smaller screens */
+    }
+    /* Adjust modal position for mobile */
+    .chat__modal {
+      right: 0; /* Position at the right edge */
+      position: fixed;
+    }
 
   }
 
@@ -273,18 +289,19 @@ footer {
   bottom: 0px; 
   right: 350px;
   z-index: 1000;
+  width: 400px;
 }
 .chat__modal_list {
   position: fixed; 
   bottom: 0px; 
   right: 10px;
   z-index: 1000;
+  width: 300px;
 }
 .chat__modal-content {
   background-color: rgb(238, 238, 238);
   border: 1px solid rgb(210, 210, 210);
   border-style: groove;
-  width: 300px; 
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
 }
@@ -305,16 +322,33 @@ footer {
   margin-left: auto; 
 }
 
-.chat__modal-body {
+.chat__item__container {
+  position: relative;
+  flex: 1;
+  bottom: 60px;
   padding: 10px;
+  background-color: white;
+  overflow-y: auto;
+  height: 50vh;
 }
-
 .chat__input-container {
-  display: flex;
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  margin-top: 50px;
+  width: 100%;
+  padding: 10px;
+  background-color: #f2f2f2;
+  border-top: 1px solid #ccc;
 }
 
 #id_message_send_input {
   flex: 1; /* Makes the input field expand to fill most of the space */
-  margin-right: 10px; /* Optional spacing between input and button */
 }
 
+#chatForm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+}

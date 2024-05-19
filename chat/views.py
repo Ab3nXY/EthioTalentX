@@ -51,6 +51,9 @@ def messages_detail(request, user_pk, room_id):
         message_data = {
             'sender_id': message.sender.id,
             'sender_username': message.sender.username,
+            'sender_first_name': message.sender.first_name,
+            'sender_last_name': message.sender.last_name,
+            'sender_profile_pic': message.sender.profile.image.url if message.sender.profile.image else '',
             'receiver_id': message.receiver.id,
             'receiver_username': message.receiver.username,
             'message': message.message,

@@ -2,24 +2,25 @@
 <div class="chat__modal" id="chatModal">
     <div class="chat__modal-content">
         <div class="chat__modal-header" onclick="toggleChatModal()">
-            <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 40px; border-radius: 50%;">
-            <p id="chatUserName" style="margin: 0;"></p>
+            <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
+            <p id="chatUserName" style="margin: 0; font-weight: bolder;"></p>
             <button type="button" class="close-button" onclick="closeChatModal()">&times;</button>
         </div>
         <hr style="margin: 0;">
         <div class="chat__modal-body" id="chatModalBody">
             <div class="chat__item__container" id="id_chat_item_container">
                 {% for message in chat_messages %}
-                    <div>{{ message.sender.username }}{% if message.receiver %} to {{ message.receiver.username }}{% endif %}: {{ message.message }}</div>
+                    <div class="chat-message">
+                    </div>
                 {% endfor %}
             </div>
             <div class="chat__input-container">
-              <form id="chatForm">
-                <input type="text" id="id_message_send_input" name="message" placeholder="Type your message..." />
-                <input type="hidden" id="receiverUserPk" value=""/>
-                <input type="hidden" id="chat_room_pk" value=""/>
-                <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane"></i></button>
-            </form>
+                <form id="chatForm">
+                    <input type="text" id="id_message_send_input" name="message" placeholder="Type your message..." />
+                    <input type="hidden" id="receiverUserPk" value=""/>
+                    <input type="hidden" id="chat_room_pk" value=""/>
+                    <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane" style="background-color: transparent; border: none; "></i></button>
+                </form>
             </div>
             {% if can_clear_chat %}
             <div class="chat__clear-container">
@@ -31,8 +32,6 @@
   </div>
 
 <script>
-// Initialize WebSocket
-// Initialize chatSocket globally
 let chatSocket;
 
 document.addEventListener('DOMContentLoaded', () => {
@@ -90,7 +89,6 @@ function openChatModal(userPk, userId) {
             createChatRoom(userPk, userId);
         }
 
-        // Initialize WebSocket connection with the correct room name
         if (chatSocket) {
             chatSocket.close(); // Close any existing connection
         }
@@ -101,7 +99,15 @@ function openChatModal(userPk, userId) {
         chatSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
             const messageElement = document.createElement("div");
-            messageElement.textContent = `${data.sender_username}: ${data.message}`;
+            messageElement.classList.add("chat-message");
+
+            messageElement.innerHTML = `
+                <img src="${data.sender_profile_pic}" alt="Profile Picture" class="profile-pic" style="width: 30px; height: 30px; border-radius: 50%; margin-right: 10px;">
+                <span>${data.sender_username}</span>: 
+                <span>${data.message}</span>
+                <span class="timestamp" style="font-size: 0.8em; color: gray;">${new Date(data.timestamp).toLocaleTimeString()}</span>
+            `;
+
             const chatBodyContainer = document.querySelector("#id_chat_item_container");
             chatBodyContainer.appendChild(messageElement);
             chatBodyContainer.scrollTop = chatBodyContainer.scrollHeight;
@@ -129,6 +135,11 @@ function sendMessage(message, receiverPk, roomId) {
     }
 }
 
+function scrollToBottom() {
+    var chatMessagesContainer = document.getElementById("id_chat_item_container");
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
+}
+
 // Toggle chat modal body height
 const chatModal = document.getElementById("chatModal");
 const chatModalBody = document.getElementById("chatModalBody");
@@ -140,10 +151,11 @@ function toggleChatModal() {
         chatModalBody.style.height = "50vh";
         chatModal.style.display = "block";
         chatModalBody.style.display = "block";
-        chatModal.style.right= `350px`;
     } else {
         chatModalBody.style.height = "0";
         chatModalBody.style.display = "none";
+
+        scrollToBottom();
     }
 }
 
@@ -206,11 +218,19 @@ function displayMessages(messages, userId) {
         const isMyMessage = message.sender_id === userId;
 
         messageElement.innerHTML = `
-            <div>${message.sender_username}: ${message.message}</div>
+            <img src="${message.sender_profile_pic}" alt="Profile Picture" class="profile-pic" style="width: 40px; height: 40px; border-radius: 50%; margin-right: 10px;">
+            <strong><span>${message.sender_first_name}</span> <span>${message.sender_last_name}</span> .</strong>
+             <span class="timestamp" style="font-size: 0.8em; color: gray;">
+                ${new Date(message.timestamp).toLocaleTimeString([], {hour: '2-digit', minute: '2-digit'})}
+            </span>
+            <div style="margin-left: 60px; margin-top: 5px; font-weight: none;"><span >${message.message}</span></div>
+            
         `;
         
         chatMessagesContainer.appendChild(messageElement);
     });
+
+    chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 }
 
 </script>
