@@ -1,8 +1,13 @@
 import json
+import logging
 from django.contrib.auth.models import User
 from channels.generic.websocket import AsyncWebsocketConsumer
 from .models import ChatRoom, ChatMessage
 from asgiref.sync import sync_to_async
+
+# Configure logging
+logging.basicConfig(level=logging.INFO)
+logger = logging.getLogger(__name__)
 
 class ChatConsumer(AsyncWebsocketConsumer):
     async def connect(self):
@@ -13,14 +18,19 @@ class ChatConsumer(AsyncWebsocketConsumer):
             user_id = self.scope['user'].pk
             self.user = await sync_to_async(User.objects.get)(pk=user_id)
 
-            room_name_query = self.scope['query_string'].decode()
-            if room_name_query:
-                room_name_parts = room_name_query.split('=')
-                if len(room_name_parts) == 2 and room_name_parts[0] == 'room':
-                    self.room_name = room_name_parts[1]
+            query_string = self.scope['query_string'].decode()
+            room_name_query = query_string.split('&')
+            for param in room_name_query:
+                key, value = param.split('=')
+                if key == 'room':
+                    self.room_name = value
+                    break
 
             if not self.room_name:
-                self.room_name = f"chat_{self.user.pk}"
+                await self.close()
+                return
+
+            logger.info(f"User {self.user.username} (ID: {self.user.pk}) is connecting to room: {self.room_name}")
 
             await self.channel_layer.group_add(
                 self.room_name,
@@ -33,6 +43,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if self.room_name:
+            logger.info(f"User {self.user.username} (ID: {self.user.pk}) is disconnecting from room: {self.room_name}")
             await self.channel_layer.group_discard(
                 self.room_name,
                 self.channel_name
@@ -52,7 +63,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 room = await sync_to_async(ChatRoom.objects.get)(pk=room_id)
                 print(f"Receiver: {receiver.username}, Room: {room.name}")
 
-                # Save message to database
                 chat_message = await sync_to_async(ChatMessage.objects.create)(
                     sender=self.user,
                     receiver=receiver,
@@ -60,7 +70,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                     message=message
                 )
 
-                # Broadcast message to room group
                 await self.channel_layer.group_send(
                     self.room_name,
                     {
@@ -75,10 +84,10 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
 
             except User.DoesNotExist:
-                print("Receiver user does not exist")
+                logger.error(f"Receiver with ID {receiver_id} does not exist")
                 return
             except ChatRoom.DoesNotExist:
-                print("Chat room does not exist")
+                logger.error(f"Chat room with ID {room_id} does not exist")
                 return
 
     async def chat_message(self, event):
@@ -89,7 +98,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         receiver_username = event['receiver_username']
         timestamp = event['timestamp']
         
-        # Send message to WebSocket
         await self.send(text_data=json.dumps({
             'message': message,
             'sender_id': sender_id,

@@ -32,7 +32,8 @@
 
 <script>
 // Initialize WebSocket
-const chatSocket = new WebSocket("ws://" + window.location.host + "/");
+// Initialize chatSocket globally
+let chatSocket;
 
 document.addEventListener('DOMContentLoaded', () => {
     document.querySelectorAll('.openChatModal').forEach(chatIcon => {
@@ -63,7 +64,54 @@ document.addEventListener('DOMContentLoaded', () => {
     });
 });
 
-// Function to send message via WebSocket
+function openChatModal(userPk, userId) {
+    console.log("Opening chat modal with User PK:", userPk, "User ID:", userId);
+    document.querySelector("#receiverUserPk").value = userPk;
+    document.querySelector("#chat_room_pk").value = ""; // Reset chat room ID
+    
+    Promise.all([
+        fetch(`/api/user/${userPk}/`).then(response => response.json()),
+        fetch(`/api/check-chat-room/${userPk}/`).then(response => response.json())
+    ])
+    .then(([userData, chatRoomData]) => {
+        console.log("Fetched user data:", userData);
+        console.log("Fetched chat room data:", chatRoomData);
+        
+        const roomId = chatRoomData.room_id;
+        console.log("Room ID:", roomId);
+
+        document.querySelector("#chat_room_pk").value = roomId;
+        document.querySelector("#chatProfilePic").src = userData.image;
+        document.querySelector("#chatUserName").textContent = userData.first_name;
+
+        if (chatRoomData.exists) {
+            loadChatRoomMessages(userId, roomId);
+        } else {
+            createChatRoom(userPk, userId);
+        }
+
+        // Initialize WebSocket connection with the correct room name
+        if (chatSocket) {
+            chatSocket.close(); // Close any existing connection
+        }
+        chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/?room=${roomId}`);
+
+        chatSocket.onopen = () => console.log("WebSocket connection opened!");
+        chatSocket.onclose = () => console.log("WebSocket connection closed!");
+        chatSocket.onmessage = (e) => {
+            const data = JSON.parse(e.data);
+            const messageElement = document.createElement("div");
+            messageElement.textContent = `${data.sender_username}: ${data.message}`;
+            const chatBodyContainer = document.querySelector("#id_chat_item_container");
+            chatBodyContainer.appendChild(messageElement);
+            chatBodyContainer.scrollTop = chatBodyContainer.scrollHeight;
+        };
+
+        toggleChatModal();
+    })
+    .catch(error => console.error('Error fetching user details or chat room data:', error));
+}
+
 function sendMessage(message, receiverPk, roomId) {
     console.log("Preparing to send message");
     console.log("Message:", message);
@@ -81,7 +129,6 @@ function sendMessage(message, receiverPk, roomId) {
     }
 }
 
-
 // Toggle chat modal body height
 const chatModal = document.getElementById("chatModal");
 const chatModalBody = document.getElementById("chatModalBody");
@@ -90,52 +137,18 @@ let expanded = false;
 function toggleChatModal() {
     expanded = !expanded;
     if (expanded) {
-        chatModalBody.style.height = "50vh"; // Expand the modal body
+        chatModalBody.style.height = "50vh";
         chatModal.style.display = "block";
         chatModalBody.style.display = "block";
         chatModal.style.right= `350px`;
     } else {
-        chatModalBody.style.height = "0"; // Collapse the modal body
+        chatModalBody.style.height = "0";
         chatModalBody.style.display = "none";
     }
 }
 
-// Function to close chat modal
 function closeChatModal(event) {
-        chatModal.style.display = "none";
-}
-
-
-function openChatModal(userPk, userId) {
-    console.log("Opening chat modal with User PK:", userPk, "User ID:", userId);
-    document.querySelector("#receiverUserPk").value = userPk;
-    document.querySelector("#chat_room_pk").value = ""; // Reset chat room ID
-    
-    Promise.all([
-        fetch(`/api/user/${userPk}/`).then(response => response.json()),
-        fetch(`/api/check-chat-room/${userPk}/`).then(response => response.json())
-    ])
-    .then(([userData, chatRoomData]) => {
-        console.log("Fetched user data:", userData);  // Debug statement
-        console.log("Fetched chat room data:", chatRoomData);  // Debug statement
-        
-        // Ensure room_id is correctly extracted from chatRoomData
-        const roomId = chatRoomData.room_id;
-        console.log("Room ID:", roomId);
-
-        // Update modal header with user data
-        document.querySelector("#chat_room_pk").value = roomId;
-        document.querySelector("#chatProfilePic").src = userData.image;
-        document.querySelector("#chatUserName").textContent = userData.first_name;
-
-        if (chatRoomData.exists) {
-            loadChatRoomMessages(userId, roomId);
-        } else {
-            createChatRoom(userPk, userId);
-        }
-        toggleChatModal();
-    })
-    .catch(error => console.error('Error fetching user details or chat room data:', error));
+    chatModal.style.display = "none";
 }
 
 function createChatRoom(userPk, userId) {
@@ -148,7 +161,7 @@ function createChatRoom(userPk, userId) {
             'X-CSRFToken': csrfToken
         },
         body: JSON.stringify({
-            user_id_1: userId, // Correcting the parameter usage
+            user_id_1: userId,
             user_id_2: userPk
         })
     })
@@ -161,12 +174,11 @@ function createChatRoom(userPk, userId) {
     .then(data => {
         document.querySelector("#chat_room_pk").value = data.room_id;
         console.log("New chat room created:", data.room_id);
-        loadChatRoomMessages(data.room_id);
+        loadChatRoomMessages(userId, data.room_id);
     })
     .catch(error => console.error('Error creating chat room:', error));
 }
 
-// Function to load messages for a specific chat room (using user_pk and room_id)
 function loadChatRoomMessages(userId, roomId) {
     console.log("Loading messages for user:", userId, "and room:", roomId);
     fetch(`/api/messages/${userId}/${roomId}/`)
@@ -177,14 +189,13 @@ function loadChatRoomMessages(userId, roomId) {
             return response.json();
         })
         .then(messages => {
-            console.log("Fetched messages:", messages);  // Debug statement
-            displayMessages(messages,userId);
+            console.log("Fetched messages:", messages);
+            displayMessages(messages, userId);
         })
         .catch(error => console.error('Error fetching messages:', error));
 }
 
-// Function to display messages received from the backend
-function displayMessages(messages,userId) {
+function displayMessages(messages, userId) {
     const chatMessagesContainer = document.querySelector("#id_chat_item_container");
     chatMessagesContainer.innerHTML = '';  // Clear existing messages
 
@@ -192,31 +203,14 @@ function displayMessages(messages,userId) {
         const messageElement = document.createElement("div");
         messageElement.classList.add("chat-message");
 
-        // Determine message sender
-        const isMyMessage = message.sender_id === userId;  // Assuming UserId is defined somewhere
+        const isMyMessage = message.sender_id === userId;
 
-        // Construct message HTML
         messageElement.innerHTML = `
             <div>${message.sender_username}: ${message.message}</div>
         `;
         
-        // Append message element to container
         chatMessagesContainer.appendChild(messageElement);
     });
 }
-
-
-
-// WebSocket event listeners
-chatSocket.onopen = () => console.log("WebSocket connection opened!");
-chatSocket.onclose = () => console.log("WebSocket connection closed!");
-chatSocket.onmessage = (e) => {
-    const data = JSON.parse(e.data);
-    const messageElement = document.createElement("div");
-    messageElement.textContent = `${data.username}: ${data.message}`;
-    const chatBodyContainer = document.querySelector("#id_chat_item_container");
-    chatBodyContainer.appendChild(messageElement);
-    chatBodyContainer.scrollTop = chatBodyContainer.scrollHeight;
-};
 
 </script>
