@@ -304,6 +304,9 @@ footer {
   border-style: groove;
   border-top-left-radius: 10px;
   border-top-right-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
 }
 
 .chat__modal-header {
@@ -316,32 +319,27 @@ footer {
 .close-button {
   background: none;
   border: none;
-  font-size: 20px;
+  font-size: 30px;
   cursor: pointer;
   color: #777;
   margin-left: auto; 
 }
-
-.chat__item__container {
-  position: relative;
+.chat__modal-body {
   flex: 1;
-  bottom: 60px;
   padding: 10px;
   background-color: white;
   overflow-y: auto;
-  height: 50vh;
 }
+
 .chat__input-container {
-  position: absolute;
-  bottom: 0;
-  left: 0;
-  margin-top: 50px;
-  width: 100%;
   padding: 10px;
   background-color: #f2f2f2;
   border-top: 1px solid #ccc;
 }
 
+.chat__clear-container {
+  padding: 10px;
+}
 #id_message_send_input {
   flex: 1; /* Makes the input field expand to fill most of the space */
 }
