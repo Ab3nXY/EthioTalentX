@@ -109,7 +109,7 @@ class ChatConsumer(AsyncWebsocketConsumer):
             'message': message,
             'sender_id': sender_id,
             'sender_username': sender_username,
-            'sender_proile_picture': sender_profile_image_url,
+            'sender_profile_picture': sender_profile_image_url,
             'sender_first_name': sender_first_name,
             'sender_last_name': sender_last_name,
             'receiver_id': receiver_id,
