@@ -1,6 +1,6 @@
 <!-- Chat Modal -->
 <div class="chat__modal" id="chatModal">
-    <div class="chat__modal-content">
+    <div class="chat__modal-content" id="chatModalContent">
       <div class="chat__modal-header" onclick="toggleChatModal()">
         <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
         <p id="chatUserName" style="margin: 0; font-weight: bolder;"></p>
@@ -15,7 +15,7 @@
           {% endfor %}
         </div>
       </div>
-      <div class="chat__input-container">
+      <div class="chat__input-container" id="chat__input-container">
         <form id="chatForm">
           <input type="text" id="id_message_send_input" name="message" placeholder="Type your message..." />
           <input type="hidden" id="receiverUserPk" value=""/>
@@ -23,11 +23,9 @@
           <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane" style="background-color: transparent; border: none;"></i></button>
         </form>
       </div>
-      {% if can_clear_chat %}
-      <div class="chat__clear-container">
-        <a href="?clear_chat=true">Clear Chat</a>
+      <div class="chat__clear-container" id="chat__clear-container" >
+        <a href="?clear_chat=true" id="clearChatLink">Clear Chat</a>
       </div>
-      {% endif %}
     </div>
   </div>
   
@@ -40,9 +38,6 @@ document.addEventListener('DOMContentLoaded', () => {
         chatIcon.addEventListener('click', (event) => {
             const clickedUserPk = event.currentTarget.dataset.userPk;
             const currentUserId = event.currentTarget.dataset.userId;
-            console.log("Chat icon clicked");
-            console.log("Clicked user PK:", clickedUserPk);
-            console.log("Current user ID:", currentUserId);
             openChatModal(clickedUserPk, currentUserId);
         });
     });
@@ -52,10 +47,6 @@ document.addEventListener('DOMContentLoaded', () => {
         const messageInput = document.querySelector("#id_message_send_input").value.trim();
         const receiverUserPk = document.querySelector("#receiverUserPk").value;
         const roomId = document.querySelector("#chat_room_pk").value;
-        console.log("Form submitted");
-        console.log("Message input:", messageInput);
-        console.log("Receiver user PK:", receiverUserPk);
-        console.log("Chat room ID:", roomId);
         if (messageInput && receiverUserPk && roomId) {
             sendMessage(messageInput, receiverUserPk, roomId);
         } else {
@@ -65,7 +56,6 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 function openChatModal(userPk, userId) {
-    console.log("Opening chat modal with User PK:", userPk, "User ID:", userId);
     document.querySelector("#receiverUserPk").value = userPk;
     document.querySelector("#chat_room_pk").value = ""; // Reset chat room ID
     
@@ -74,13 +64,8 @@ function openChatModal(userPk, userId) {
         fetch(`/api/check-chat-room/${userPk}/`).then(response => response.json())
     ])
     .then(([userData, chatRoomData]) => {
-        console.log("Fetched user data:", userData);
-        console.log("Fetched chat room data:", chatRoomData);
-        
         const roomId = chatRoomData.room_id;
-        console.log("Room ID:", roomId);
-        console.log("Room ID:", userData.image);
-        console.log("Room ID:", userData.first_name);
+
 
         document.querySelector("#chat_room_pk").value = roomId;
         document.querySelector("#chatProfilePic").src = userData.image;
@@ -101,7 +86,6 @@ function openChatModal(userPk, userId) {
         chatSocket.onclose = () => console.log("WebSocket connection closed!");
         chatSocket.onmessage = (e) => {
             const data = JSON.parse(e.data);
-            console.log("data:", data);
             const messageElement = document.createElement("div");
             messageElement.classList.add("chat-message");
 
@@ -126,10 +110,6 @@ function openChatModal(userPk, userId) {
 }
 
 function sendMessage(message, receiverPk, roomId) {
-    console.log("Preparing to send message");
-    console.log("Message:", message);
-    console.log("Receiver PK:", receiverPk);
-    console.log("Room ID:", roomId);
     if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
         chatSocket.send(JSON.stringify({
             message: message,
@@ -144,20 +124,16 @@ function sendMessage(message, receiverPk, roomId) {
 
 // Toggle chat modal body height
 const chatModal = document.getElementById("chatModal");
-const chatModalBody = document.getElementById("chatModalBody");
+
 let expanded = false;
 
 function toggleChatModal() {
     expanded = !expanded;
     if (expanded) {
-        chatModalBody.style.height = "50vh";
+        chatModal.style.height = "70vh";
         chatModal.style.display = "block";
-        chatModalBody.style.display = "block";
     } else {
-        chatModalBody.style.height = "0";
-        chatModalBody.style.display = "none";
-
-        scrollToBottom();
+        chatModal.style.height = "60px";
     }
 }
 
@@ -166,7 +142,6 @@ function closeChatModal(event) {
 }
 
 function createChatRoom(userPk, userId) {
-    console.log("Creating new chat room with user IDs:", userPk, userId);
     const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
     fetch(`/api/create-chat-room/`, {
         method: 'POST',
@@ -194,7 +169,6 @@ function createChatRoom(userPk, userId) {
 }
 
 function loadChatRoomMessages(userId, roomId) {
-    console.log("Loading messages for user:", userId, "and room:", roomId);
     fetch(`/api/messages/${userId}/${roomId}/`)
         .then(response => {
             if (!response.ok) {
@@ -203,11 +177,42 @@ function loadChatRoomMessages(userId, roomId) {
             return response.json();
         })
         .then(messages => {
-            console.log("Fetched messages:", messages);
             displayMessages(messages, userId);
         })
         .catch(error => console.error('Error fetching messages:', error));
+
+    // Attach event listener for clearing chat
+    document.addEventListener('DOMContentLoaded', function() {
+        const clearChatLink = document.getElementById('clearChatLink');
+        if (clearChatLink) {
+            clearChatLink.addEventListener('click', function(event) {
+                event.preventDefault();
+                
+                fetch(`/api/messages/${userId}/${roomId}/?clear_chat=true`, {
+                    method: 'GET',
+                    headers: {
+                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+                    }
+                })
+                .then(response => response.json())
+                .then(data => {
+                    if (data.status === 'chat cleared') {
+                        const chatContainer = document.getElementById('id_chat_item_container');
+                        if (chatContainer) {
+                            chatContainer.innerHTML = '';
+                        } else {
+                            console.error('Element with id_chat_item_container not found');
+                        }
+                    }
+                })
+                .catch(error => console.error('Error clearing chat:', error));
+            });
+        } else {
+            console.error('Clear chat link element not found');
+        }
+    });
 }
+
 
 function displayMessages(messages, userId) {
     const chatMessagesContainer = document.querySelector("#chatModalBody");

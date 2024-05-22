@@ -211,21 +211,12 @@ footer {
       transition: all 0.2s ease-in-out;
       border-radius: 5px;
     }
-    .chat__modal-content {
-      width: 90%; /* Adjust width for smaller screens */
+    #chatModal { 
+      right: 0;
     }
 
-    .chat__modal-body {
-        max-height: calc(100vh - 200px); /* Adjust for smaller screens and input container height */
-    }
-
-    .chat__item__container {
-        max-height: 200px; /* Adjust maximum height for messages on smaller screens */
-    }
-    /* Adjust modal position for mobile */
-    .chat__modal {
-      right: 0; /* Position at the right edge */
-      position: fixed;
+    .chat__modal_list {
+      display: none; /* Hide chat modal list on mobile (optional) */
     }
 
   }
@@ -349,4 +340,28 @@ footer {
   align-items: center;
   justify-content: space-between;
   width: 100%;
+  padding: 10px;
+}
+
+#chatForm textarea,
+#chatForm button {
+  outline: none; /* Prevents the default focus outline */
+  border: none; /* Removes any border that might show up on focus */
+}
+
+/* Remove hover styles */
+#chatForm input:hover,
+#chatForm textarea:hover,
+#chatForm button:hover {
+  background-color: initial; /* Resets the background color */
+  color: initial; /* Resets the text color */
+}
+
+/* Remove focus styles */
+#chatForm input:focus,
+#chatForm textarea:focus,
+#chatForm button:focus {
+  background-color: initial; /* Resets the background color */
+  color: initial; /* Resets the text color */
+  outline: none; /* Ensures no outline is shown */
 }

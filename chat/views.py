@@ -13,11 +13,8 @@ import json
 
 @login_required
 def user_detail(request, user_pk):
-    print(f"Fetching details for user with PK: {user_pk}")  # Debug statement
     user = get_object_or_404(User, pk=user_pk)
-    print(f"User found: {user.username}")  # Debug statement
     profile = get_object_or_404(Profile, user=user)
-    print(f"Profile found for user: {profile}")  # Debug statement
     user_data = {
         'id': user.id,
         'username': user.username,
@@ -26,7 +23,6 @@ def user_detail(request, user_pk):
         'first_name': user.first_name,
         'last_name': user.last_name,
     }
-    print(f"User data to be returned: {user_data}")  # Debug statement
     return JsonResponse(user_data)
 
 @login_required
@@ -34,20 +30,19 @@ def messages_detail(request, user_pk, room_id):
     user_to_chat_with = get_object_or_404(User, pk=user_pk)
     current_user = request.user
     
-    # Debug statements
-    print(f"Current User: {current_user.username} (ID: {current_user.id})")
-    print(f"Chatting with: {user_to_chat_with.username} (ID: {user_to_chat_with.id})")
-    print(f"Chat room = {room_id}")
-    
     # Fetch chat room based on room_id
     chat_room = get_object_or_404(ChatRoom, pk=room_id)
     
+    if request.GET.get('clear_chat'):
+        # Clear chat messages in the chat room
+        ChatMessage.objects.filter(room=chat_room).delete()
+        return JsonResponse({'status': 'chat cleared'})
+
     # Fetch messages for the chat room
     chat_messages = ChatMessage.objects.filter(room=chat_room).order_by('timestamp')
     
     messages_data = []
     for message in chat_messages:
-        print(f"Message from {message.sender.username} to {message.receiver.username}: {message.message}")
         message_data = {
             'sender_id': message.sender.id,
             'sender_username': message.sender.username,
@@ -63,7 +58,6 @@ def messages_detail(request, user_pk, room_id):
     
     return JsonResponse(messages_data, safe=False)
 
-
 @login_required
 def chatPage(request, *args, **kwargs):
     if not request.user.is_authenticated:
@@ -77,7 +71,6 @@ def chatPage(request, *args, **kwargs):
         try:
             user_to_chat_with = User.objects.get(username=username_to_chat)
         except User.DoesNotExist:
-            print(f"User with username '{username_to_chat}' does not exist.")  # Debugging print
             return HttpResponseNotFound("User not found")
 
     # Ensure both users are fetched and valid
@@ -102,7 +95,6 @@ def chatPage(request, *args, **kwargs):
                 room=chat_room,
                 message=message
             )
-            print(f"Message sent from {request.user.username} to {user_to_chat_with.username}: {message}")  # Debugging print
             # Redirect back to the chat page after sending a message
             return redirect('chat_page', username=user_to_chat_with.username)
 
@@ -111,7 +103,6 @@ def chatPage(request, *args, **kwargs):
     if request.GET.get('clear_chat'):
         if chat_room and request.user.has_perm('clear_chat', chat_room):
             chat_room.messages.all().delete()  # Assuming messages are related to the chat room
-            print(f"Chat messages cleared by {request.user.username} in chat room {chat_room.id}")  # Debugging print
 
     # Fetch latest chat rooms for the current user
     user_chat_rooms = ChatRoom.objects.filter(users=request.user).order_by('-last_message_time')
@@ -142,7 +133,6 @@ def chatPage(request, *args, **kwargs):
         'user_data': user_data,  # Pass user data directly to template
     }
     return render(request, "chat/chatPage.html", context)
-
 
 @login_required
 def chat_list(request):
@@ -184,7 +174,6 @@ def create_chat_room(request):
     chat_room.save()
 
     return JsonResponse({'room_id': chat_room.pk})
-
 
 @login_required
 def check_chat_room(request, user_id):

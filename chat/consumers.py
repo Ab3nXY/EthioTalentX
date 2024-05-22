@@ -55,7 +55,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
         message = text_data_json.get("message")
         receiver_id = text_data_json.get("receiver_id")
         room_id = text_data_json.get("roomId")
-        print("Chat room = ", room_id)
 
         if message and receiver_id and room_id:
             try:
@@ -64,7 +63,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 sender_profile_image_url = profile.image.url
                 receiver = await sync_to_async(User.objects.get)(pk=receiver_id)
                 room = await sync_to_async(ChatRoom.objects.get)(pk=room_id)
-                print(f"Receiver: {receiver.username}, Room: {room.name}")
 
                 chat_message = await sync_to_async(ChatMessage.objects.create)(
                     sender=self.user,
