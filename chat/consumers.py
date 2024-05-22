@@ -31,8 +31,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 await self.close()
                 return
 
-            logger.info(f"User {self.user.username} (ID: {self.user.pk}) is connecting to room: {self.room_name}")
-
             await self.channel_layer.group_add(
                 self.room_name,
                 self.channel_name
@@ -44,7 +42,6 @@ class ChatConsumer(AsyncWebsocketConsumer):
 
     async def disconnect(self, close_code):
         if self.room_name:
-            logger.info(f"User {self.user.username} (ID: {self.user.pk}) is disconnecting from room: {self.room_name}")
             await self.channel_layer.group_discard(
                 self.room_name,
                 self.channel_name
@@ -88,10 +85,8 @@ class ChatConsumer(AsyncWebsocketConsumer):
                 )
 
             except User.DoesNotExist:
-                logger.error(f"Receiver with ID {receiver_id} does not exist")
                 return
             except ChatRoom.DoesNotExist:
-                logger.error(f"Chat room with ID {room_id} does not exist")
                 return
 
     async def chat_message(self, event):

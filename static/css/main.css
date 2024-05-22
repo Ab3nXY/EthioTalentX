@@ -328,9 +328,6 @@ footer {
   border-top: 1px solid #ccc;
 }
 
-.chat__clear-container {
-  padding: 10px;
-}
 #id_message_send_input {
   flex: 1; /* Makes the input field expand to fill most of the space */
 }
@@ -353,7 +350,7 @@ footer {
 #chatForm input:hover,
 #chatForm textarea:hover,
 #chatForm button:hover {
-  background-color: initial; /* Resets the background color */
+  background-color: white; /* Resets the background color */
   color: initial; /* Resets the text color */
 }
 
@@ -361,7 +358,7 @@ footer {
 #chatForm input:focus,
 #chatForm textarea:focus,
 #chatForm button:focus {
-  background-color: initial; /* Resets the background color */
+  background-color: white; /* Resets the background color */
   color: initial; /* Resets the text color */
   outline: none; /* Ensures no outline is shown */
 }
