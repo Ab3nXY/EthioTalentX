@@ -163,18 +163,25 @@ def chatPage(request, username):
 
 @login_required
 def fetch_chat_rooms(request):
-    user_chat_rooms = ChatRoom.objects.filter(users=request.user).annotate(
+    user = request.user
+
+    # Fetch chat rooms for the current user and annotate with latest message time
+    user_chat_rooms = ChatRoom.objects.filter(users=user).annotate(
         latest_message_time=Max('messages__timestamp')
     ).order_by('-latest_message_time')
 
     chat_rooms_data = []
     for room in user_chat_rooms:
-        other_user = room.users.exclude(id=request.user.id).first()
+        other_user = room.users.exclude(id=user.id).first()
         last_message = room.messages.order_by('-timestamp').first()
+
+        # Calculate unread message count for the current user in this room
+        unread_count = ChatMessage.objects.filter(room=room, read=False, receiver=user).count()
+
         if other_user:
             chat_rooms_data.append({
                 'id': room.id,
-                'other_user_id':other_user.id,
+                'other_user_id': other_user.id,
                 'other_user_username': other_user.username,
                 'other_user_first_name': other_user.first_name,
                 'other_user_last_name': other_user.last_name,
@@ -182,6 +189,7 @@ def fetch_chat_rooms(request):
                 'latest_message_time': room.latest_message_time,
                 'last_message_text': last_message.message if last_message else "No messages yet",
                 'last_message_time_formatted': last_message.timestamp.strftime("%b %d") if last_message else "No messages yet",
+                'unread_count': unread_count,
             })
 
     return JsonResponse({'chat_rooms_data': chat_rooms_data})
@@ -225,4 +233,14 @@ def check_chat_room(request, user_id):
         return JsonResponse({'exists': True, 'room_id': chat_room.pk})
     else:
         return JsonResponse({'exists': False})
+    
+@login_required
+def mark_messages_as_read(request, room_id):
+    user = request.user
+
+    # Mark all unread messages in the specified room as read for the current user
+    unread_messages = ChatMessage.objects.filter(room_id=room_id, receiver=user, read=False)
+    unread_messages.update(read=True)
+
+    return JsonResponse({'success': True})
     

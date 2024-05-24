@@ -3,6 +3,7 @@ from . import views
 
 urlpatterns = [
     path('chat/<str:username>/', views.chatPage, name='chat_page'),
+    path('mark_messages_as_read/<int:room_id>/', views.mark_messages_as_read, name='mark_messages_as_read'),
     path('api/user/<int:user_pk>/', views.user_detail, name='user_detail'),
     path('api/messages/<int:user_pk>/<int:room_id>/', views.messages_detail, name='messages_detail'),
     path('api/fetch-chat-rooms/', views.fetch_chat_rooms, name='fetch_chat_rooms'),

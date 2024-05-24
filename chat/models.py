@@ -16,6 +16,7 @@ class ChatMessage(models.Model):
     room = models.ForeignKey(ChatRoom, on_delete=models.CASCADE, related_name='messages', default='')
     message = models.TextField()
     timestamp = models.DateTimeField(auto_now_add=True)
+    read = models.BooleanField(default=False)
 
     def __str__(self):
         return f"Chat Message (From: {self.sender}, To: {self.receiver}, Room: {self.room.id}, Message: {self.message[:20]}...)"

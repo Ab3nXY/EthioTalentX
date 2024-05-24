@@ -5,6 +5,7 @@
         <div class="chat__modal-header" onclick="toggleChatListModal()">
             <img src="{{ request.user.profile.image.url }}" alt="Profile Picture" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
             <p style="margin: 0;">Messaging</p>
+            <span id="unreadCounterHeader" class="unread-counter-header"></span>
         </div>
         <hr style="margin: 0;">
         <div class="chat__modal-body" id="chatListModalBody" style="display: none;">
@@ -24,50 +25,53 @@
             modalBody.style.display = 'block';
             fetchChatRooms();  // Fetch chat rooms when the modal is opened
         } else {
-            modal.style.height = '50px';   // Collapse height when hidden
+            modal.style.height = '60px';   // Collapse height when hidden
             modalBody.style.display = 'none';
         }
     }
 
     function fetchChatRooms() {
-    var xhr = new XMLHttpRequest();
-    xhr.open('GET', '{% url "fetch_chat_rooms" %}', true);
-    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
-    xhr.onload = function () {
-        if (xhr.status >= 200 && xhr.status < 400) {
-            var data = JSON.parse(xhr.responseText);
-            var chatRoomsList = document.getElementById('chatRoomsList');
-            chatRoomsList.innerHTML = '';
-            if (data.chat_rooms_data.length > 0) {
-                data.chat_rooms_data.forEach(function (chat_room) {
-                    var listItem = document.createElement('li');
-                    listItem.innerHTML = `
-                        <div class="chat-room-link" data-user-pk="${chat_room.other_user_id}" data-user-id="{{ request.user.pk }}" onclick="openChatModal('${chat_room.other_user_id}', '{{ request.user.pk }}')">
-                            <img src="${chat_room.other_user_profile_pic}" alt="Profile Picture" class="profile-pic me-2" style="width: 30px; border-radius: 50%;">
-                            <div class="chat-room-info">
-                                <div class="chat-room-header">
-                                    <span>${chat_room.other_user_first_name} ${chat_room.other_user_last_name}</span>
-                                    <span class="chat-room-date">${chat_room.last_message_time_formatted}</span>
+        updateUnreadCounterHeader();
+        var xhr = new XMLHttpRequest();
+        xhr.open('GET', '{% url "fetch_chat_rooms" %}', true);
+        xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+        xhr.onload = function () {
+            if (xhr.status >= 200 && xhr.status < 400) {
+                var data = JSON.parse(xhr.responseText);
+                var chatRoomsList = document.getElementById('chatRoomsList');
+                chatRoomsList.innerHTML = '';
+                if (data.chat_rooms_data.length > 0) {
+                    data.chat_rooms_data.forEach(function (chat_room) {
+                        var listItem = document.createElement('li');
+                        listItem.innerHTML = `
+                            <div class="chat-room-link" data-user-pk="${chat_room.other_user_id}" data-user-id="{{ request.user.pk }}" onclick="openChatModal('${chat_room.other_user_id}', '{{ request.user.pk }}')">
+                                <img src="${chat_room.other_user_profile_pic}" alt="Profile Picture" class="profile-pic me-2" style="width: 30px; border-radius: 50%;">
+                                <div class="chat-room-info">
+                                    <div class="chat-room-header">
+                                        <span>${chat_room.other_user_first_name} ${chat_room.other_user_last_name}</span>
+                                        <span class="chat-room-date">${chat_room.last_message_time_formatted}</span>
+                                    </div>
+                                    <div class="chat-room-last-message">
+                                        ${chat_room.last_message_text}
+                                    </div>
                                 </div>
-                                <div class="chat-room-last-message">
-                                    ${chat_room.last_message_text}
-                                </div>
+                                ${chat_room.unread_count !== 0 ? `<span class="unread-counter">${chat_room.unread_count}</span>` : ''}
                             </div>
-                        </div>
-                    `;
-                    chatRoomsList.appendChild(listItem);
-                });
+                        `;
+                        chatRoomsList.appendChild(listItem);
+                    });
+                } else {
+                    chatRoomsList.innerHTML = '<li>No chat rooms found.</li>';
+                }
             } else {
-                chatRoomsList.innerHTML = '<li>No chat rooms found.</li>';
+                console.error('Failed to fetch chat rooms');
             }
-        } else {
-            console.error('Failed to fetch chat rooms');
-        }
-    };
-    xhr.onerror = function () {
-        console.error('Request failed');
-    };
-    xhr.send();
-}
+        };
+        xhr.onerror = function () {
+            console.error('Request failed');
+        };
+        xhr.send();
+    }
+
 
 </script>

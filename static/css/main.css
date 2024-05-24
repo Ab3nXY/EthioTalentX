@@ -401,3 +401,31 @@ footer {
   padding: 0; /* Remove default padding */
   margin: 0; /* Remove default margin */
 }
+.unread-counter{
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.unread-counter-header {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  background-color: red;
+  color: white;
+  width: 25px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}

@@ -4,7 +4,6 @@
         <div class="chat__modal-header" onclick="toggleChatModal()">
             <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
             <p id="chatUserName" style="margin: 0; font-weight: bolder;"></p>      
-
             <button type="button" class="close-button" onclick="closeChatModal()">&times;</button>
         </div>
       <hr style="margin: 0;">
@@ -130,6 +129,7 @@ function openChatModal(userPk, userId) {
                 confirmDeleteChat(userId, roomId);
             });
         }
+        markMessagesAsRead(roomId);
 
         toggleChatModal();
     })
@@ -178,7 +178,6 @@ function confirmDeleteChat(userId, roomId) {
         return false;
     }
 }
-
 
 function sendMessage(message, receiverPk, roomId) {
     if (chatSocket && chatSocket.readyState === WebSocket.OPEN) {
@@ -316,4 +315,64 @@ function displayMessages(messages, userId) {
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 }
 
+function markMessagesAsRead(roomId) {
+    const csrfToken = document.querySelector('[name=csrfmiddlewaretoken]').value;
+            
+    var xhr = new XMLHttpRequest();
+    xhr.open('POST', '/mark_messages_as_read/' + roomId + '/', true);  // Adjust URL as per your Django URLs configuration
+    xhr.setRequestHeader('X-Requested-With', 'XMLHttpRequest');
+    xhr.setRequestHeader('X-CSRFToken', csrfToken);
+    xhr.onload = function () {
+        if (xhr.status >= 200 && xhr.status < 400) {
+            var response = JSON.parse(xhr.responseText);
+            if (response.success) {
+                // Optionally update UI or handle success message
+                console.log('Messages marked as read successfully.');
+                // Refresh chat room list or update unread counters as needed
+                fetchChatRooms();  // Example function to refresh chat room list after marking messages as read
+            } else {
+                console.error('Failed to mark messages as read.');
+            }
+        } else {
+            console.error('Request failed.');
+        }
+    };
+    xhr.onerror = function () {
+        console.error('Request failed.');
+    };
+    xhr.send();
+}
+
+function updateUnreadCounterHeader() {
+    // Fetch chat rooms data via AJAX request
+    fetch('{% url "fetch_chat_rooms" %}', {
+        headers: {
+            'X-Requested-With': 'XMLHttpRequest',
+        }
+    })
+    .then(response => {
+        if (!response.ok) {
+            throw new Error('Network response was not ok');
+        }
+        return response.json();
+    })
+    .then(data => {
+        const unreadCounterHeader = document.getElementById('unreadCounterHeader');
+        let totalUnreadCount = 0;
+
+        data.chat_rooms_data.forEach(chat_room => {
+            totalUnreadCount += chat_room.unread_count;
+        });
+
+        if (totalUnreadCount > 0) {
+            unreadCounterHeader.textContent = totalUnreadCount;
+            unreadCounterHeader.style.display = 'inline-block'; // Show the unread counter
+        } else {
+            unreadCounterHeader.style.display = 'none'; // Hide if no unread messages
+        }
+    })
+    .catch(error => {
+        console.error('Error fetching chat rooms:', error);
+    });
+}
 </script>
