@@ -13,6 +13,8 @@ import json
 import logging
 from django.db.models import Max
 
+logger = logging.getLogger(__name__)
+
 @login_required
 def user_detail(request, user_pk):
     user = get_object_or_404(User, pk=user_pk)
@@ -26,8 +28,6 @@ def user_detail(request, user_pk):
         'last_name': user.last_name,
     }
     return JsonResponse(user_data)
-
-logger = logging.getLogger(__name__)
 
 @login_required
 def messages_detail(request, user_pk, room_id):
@@ -63,7 +63,7 @@ def messages_detail(request, user_pk, room_id):
 
         try:
             chat_room = get_object_or_404(ChatRoom, users__id=user_id, id=room_id)
-            
+
             # Check if the user is a participant in the chat room
             if request.user in chat_room.users.all():
                 chat_room.messages.all().delete()
@@ -84,6 +84,7 @@ def messages_detail(request, user_pk, room_id):
         # Handle other HTTP methods if needed
         logger.warning("Invalid HTTP method")
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
+
 
 @login_required
 def chatPage(request, username):
@@ -184,7 +185,6 @@ def fetch_chat_rooms(request):
             })
 
     return JsonResponse({'chat_rooms_data': chat_rooms_data})
-
 
 @login_required
 @require_POST
