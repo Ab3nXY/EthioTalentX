@@ -5,7 +5,8 @@ class ChatRoom(models.Model):
     name = models.CharField(max_length=100, default="")
     users = models.ManyToManyField(User, related_name='chatrooms')
     is_active = models.BooleanField(default=True)
-
+    last_message_time = models.DateTimeField(null=True, blank=True)
+    
     def __str__(self):
         return f"Chat Room ({', '.join(str(user) for user in self.users.all())})"
 

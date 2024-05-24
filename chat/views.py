@@ -11,6 +11,7 @@ from django.db.models import Q
 from django.views.decorators.http import require_POST 
 import json
 import logging
+from django.db.models import Max
 
 @login_required
 def user_detail(request, user_pk):
@@ -85,17 +86,16 @@ def messages_detail(request, user_pk, room_id):
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
 @login_required
-def chatPage(request, *args, **kwargs):
+def chatPage(request, username):
     if not request.user.is_authenticated:
         return redirect("account_login")
 
     user_to_chat_with = None
-    username_to_chat = kwargs.get('username')
     
     # Fetch the user to chat with based on username
-    if username_to_chat:
+    if username:
         try:
-            user_to_chat_with = User.objects.get(username=username_to_chat)
+            user_to_chat_with = User.objects.get(username=username)
         except User.DoesNotExist:
             return HttpResponseNotFound("User not found")
 
@@ -138,15 +138,15 @@ def chatPage(request, *args, **kwargs):
         'id': user_to_chat_with.pk,
         'username': user_to_chat_with.username,
         'email': user_to_chat_with.email,
-        'company': user_to_chat_with.company,
-        'website': user_to_chat_with.website,
-        'location': user_to_chat_with.location,
-        'bio': user_to_chat_with.bio,
-        'githubusername': user_to_chat_with.githubusername,
-        'date': user_to_chat_with.date.strftime('%Y-%m-%d %H:%M:%S'),
-        'image_url': user_to_chat_with.image.url if user_to_chat_with.image else '',
-        'occupation': user_to_chat_with.occupation,
-        'skills': list(user_to_chat_with.skills.values_list('name', flat=True))
+        'company': user_to_chat_with.profile.company if hasattr(user_to_chat_with, 'profile') else '',
+        'website': user_to_chat_with.profile.website if hasattr(user_to_chat_with, 'profile') else '',
+        'location': user_to_chat_with.profile.location if hasattr(user_to_chat_with, 'profile') else '',
+        'bio': user_to_chat_with.profile.bio if hasattr(user_to_chat_with, 'profile') else '',
+        'githubusername': user_to_chat_with.profile.githubusername if hasattr(user_to_chat_with, 'profile') else '',
+        'date': user_to_chat_with.date_joined.strftime('%Y-%m-%d %H:%M:%S'),
+        'image_url': user_to_chat_with.profile.image.url if hasattr(user_to_chat_with, 'profile') and user_to_chat_with.profile.image else '',
+        'occupation': user_to_chat_with.profile.occupation if hasattr(user_to_chat_with, 'profile') else '',
+        'skills': list(user_to_chat_with.profile.skills.values_list('name', flat=True)) if hasattr(user_to_chat_with, 'profile') else []
     }
 
     context = {
@@ -161,14 +161,30 @@ def chatPage(request, *args, **kwargs):
     return render(request, "chat/chatPage.html", context)
 
 @login_required
-def chat_list(request):
-    # Fetch latest chat rooms for the current user
-    user_chat_rooms = ChatRoom.objects.filter(users=request.user).order_by('-last_message_time')
+def fetch_chat_rooms(request):
+    user_chat_rooms = ChatRoom.objects.filter(users=request.user).annotate(
+        latest_message_time=Max('messages__timestamp')
+    ).order_by('-latest_message_time')
 
-    context = {
-        'user_chat_rooms': user_chat_rooms,
-    }
-    return render(request, "chat/chat_list.html", context)
+    chat_rooms_data = []
+    for room in user_chat_rooms:
+        other_user = room.users.exclude(id=request.user.id).first()
+        last_message = room.messages.order_by('-timestamp').first()
+        if other_user:
+            chat_rooms_data.append({
+                'id': room.id,
+                'other_user_id':other_user.id,
+                'other_user_username': other_user.username,
+                'other_user_first_name': other_user.first_name,
+                'other_user_last_name': other_user.last_name,
+                'other_user_profile_pic': other_user.profile.image.url,
+                'latest_message_time': room.latest_message_time,
+                'last_message_text': last_message.message if last_message else "No messages yet",
+                'last_message_time_formatted': last_message.timestamp.strftime("%b %d") if last_message else "No messages yet",
+            })
+
+    return JsonResponse({'chat_rooms_data': chat_rooms_data})
+
 
 @login_required
 @require_POST
