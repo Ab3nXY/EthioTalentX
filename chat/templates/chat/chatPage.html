@@ -1,34 +1,33 @@
 <!-- Chat Modal -->
 <div class="chat__modal" id="chatModal">
     <div class="chat__modal-content" id="chatModalContent">
-      <div class="chat__modal-header" onclick="toggleChatModal()">
-        <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
-        <p id="chatUserName" style="margin: 0; font-weight: bolder;"></p>      
+        <div class="chat__modal-header" onclick="toggleChatModal()">
+            <img src="" alt="Profile Picture" id="chatProfilePic" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
+            <p id="chatUserName" style="margin: 0; font-weight: bolder;"></p>      
 
-        <button type="button" class="close-button" onclick="closeChatModal()">&times;</button>
-      </div>
+            <button type="button" class="close-button" onclick="closeChatModal()">&times;</button>
+        </div>
       <hr style="margin: 0;">
-      <div class="chat__modal-body" id="chatModalBody">
-        <div class="chat__item__container" id="id_chat_item_container">
-          {% for message in chat_messages %}
-          <div class="chat-message">
-          </div>
-          {% endfor %}
-
+        <div class="chat__modal-body" id="chatModalBody">
+            <div class="chat__item__container" id="id_chat_item_container">
+                {% for message in chat_messages %}
+                <div class="chat-message"></div>
+                {% endfor %}
+            </div>
         </div>
-      </div>
-        <div class="chat__clear-container py-2 bg-white " id="chat__clear-container">
-            <a href="?clear_chat=true" id="clearChatLink" style="text-decoration: none; color: red; margin-left: 300px;">Clear Chat</a>
-        </div>
-      <div class="chat__input-container" id="chat__input-container">
-        <form id="chatForm">
-          <textarea id="id_message_send_input" name="message" placeholder="Type your message..." rows="2"></textarea>
-          <input type="hidden" id="receiverUserPk" value=""/>
-          <input type="hidden" id="chat_room_pk" value=""/>
-          <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane" style="background-color: transparent; border: none;"></i></button>
-        </form>
 
-      </div>
+        <div class="chat__clear-container py-2 bg-white" id="chat__clear-container">
+            <a href="#" id="clearChatLink" style="text-decoration: none; color: red; margin-left: 300px;">Clear Chat</a>
+        </div>
+
+        <div class="chat__input-container" id="chat__input-container">
+            <form id="chatForm">
+            <input id="id_message_send_input" name="message" placeholder="Type your message..."></input>
+            <input type="hidden" id="receiverUserPk" value=""/>
+            <input type="hidden" id="chat_room_pk" value=""/>
+            <button type="submit" id="id_message_send_button"><i class="far fa-paper-plane" style="background-color: transparent; border: none;"></i></button>
+            </form>
+        </div>
 
     </div>
   </div>
@@ -60,6 +59,7 @@ document.addEventListener('DOMContentLoaded', () => {
 });
 
 let lastSender = null;
+
 
 function openChatModal(userPk, userId) {
     document.querySelector("#receiverUserPk").value = userPk;
@@ -122,9 +122,61 @@ function openChatModal(userPk, userId) {
             chatBodyContainer.scrollTop = chatBodyContainer.scrollHeight;
         };
 
+        // Add event listener for delete chat button
+        const deleteChatButton = document.querySelector("#clearChatLink");
+        if (deleteChatButton) {
+            deleteChatButton.addEventListener('click', (event) => {
+                event.preventDefault(); // Prevent the default action
+                confirmDeleteChat(userId, roomId);
+            });
+        }
+
         toggleChatModal();
     })
     .catch(error => console.error('Error fetching user details or chat room data:', error));
+}
+
+function confirmDeleteChat(userId, roomId) {
+    console.log("confirmDeleteChat called with userId:", userId, "and roomId:", roomId);
+
+    const confirmation = confirm("Are you sure you want to delete all chat messages? This action cannot be undone.");
+
+    if (confirmation) {
+        fetch(`/api/messages/${userId}/${roomId}/?clear_chat=true`, {
+            method: 'POST',
+            headers: {
+                'Content-Type': 'application/json',
+                'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
+            },
+        })
+        .then(response => {
+            if (!response.ok) {
+                throw new Error('Network response was not ok');
+            }
+            return response.json();
+        })
+        .then(data => {
+            console.log("Fetch response data:", data);
+
+            // Check if 'status' property exists in the response data
+            if (data && data.status === 'chat cleared') {
+                console.log("Chat messages deleted successfully!");
+                const chatModalContent = document.querySelector('#chatModalBody'); // Assuming chat messages are within this element
+                if (chatModalContent) {
+                    chatModalContent.innerHTML = ''; // Clear all child elements
+                } else {
+                    console.error('Chat modal content element not found');
+                }
+            }
+        })
+        .catch(error => {
+            console.error("Network error or error handling response:", error);
+        });
+
+        return true;
+    } else {
+        return false;
+    }
 }
 
 
@@ -187,6 +239,7 @@ function createChatRoom(userPk, userId) {
 }
 
 function loadChatRoomMessages(userId, roomId) {
+    // Fetch messages for the specified user and room ID
     fetch(`/api/messages/${userId}/${roomId}/`)
         .then(response => {
             if (!response.ok) {
@@ -195,40 +248,10 @@ function loadChatRoomMessages(userId, roomId) {
             return response.json();
         })
         .then(messages => {
+            // Assuming displayMessages is a function to render/display messages
             displayMessages(messages, userId);
         })
         .catch(error => console.error('Error fetching messages:', error));
-
-    // Attach event listener for clearing chat
-    document.addEventListener('DOMContentLoaded', function() {
-        const clearChatLink = document.getElementById('clearChatLink');
-        if (clearChatLink) {
-            clearChatLink.addEventListener('click', function(event) {
-                event.preventDefault();
-                
-                fetch(`/api/messages/${userId}/${roomId}/?clear_chat=true`, {
-                    method: 'GET',
-                    headers: {
-                        'X-CSRFToken': document.querySelector('[name=csrfmiddlewaretoken]').value
-                    }
-                })
-                .then(response => response.json())
-                .then(data => {
-                    if (data.status === 'chat cleared') {
-                        const chatContainer = document.getElementById('id_chat_item_container');
-                        if (chatContainer) {
-                            chatContainer.innerHTML = '';
-                        } else {
-                            console.error('Element with id_chat_item_container not found');
-                        }
-                    }
-                })
-                .catch(error => console.error('Error clearing chat:', error));
-            });
-        } else {
-            console.error('Clear chat link element not found');
-        }
-    });
 }
 
 function displayMessages(messages, userId) {
@@ -292,7 +315,5 @@ function displayMessages(messages, userId) {
 
     chatMessagesContainer.scrollTop = chatMessagesContainer.scrollHeight;
 }
-
-
 
 </script>

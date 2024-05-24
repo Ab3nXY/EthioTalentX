@@ -10,6 +10,7 @@ from django.shortcuts import get_object_or_404
 from django.db.models import Q
 from django.views.decorators.http import require_POST 
 import json
+import logging
 
 @login_required
 def user_detail(request, user_pk):
@@ -25,38 +26,63 @@ def user_detail(request, user_pk):
     }
     return JsonResponse(user_data)
 
+logger = logging.getLogger(__name__)
+
 @login_required
 def messages_detail(request, user_pk, room_id):
-    user_to_chat_with = get_object_or_404(User, pk=user_pk)
-    current_user = request.user
-    
-    # Fetch chat room based on room_id
-    chat_room = get_object_or_404(ChatRoom, pk=room_id)
-    
-    if request.GET.get('clear_chat'):
-        # Clear chat messages in the chat room
-        ChatMessage.objects.filter(room=chat_room).delete()
-        return JsonResponse({'status': 'chat cleared'})
+    if request.method == 'GET':
+        # Fetch chat room based on room_id
+        chat_room = get_object_or_404(ChatRoom, id=room_id)
+        
+        # Fetch messages for the chat room
+        chat_messages = ChatMessage.objects.filter(room=chat_room).order_by('timestamp')
+        
+        messages_data = []
+        for message in chat_messages:
+            message_data = {
+                'sender_id': message.sender.id,
+                'sender_username': message.sender.username,
+                'sender_first_name': message.sender.first_name,
+                'sender_last_name': message.sender.last_name,
+                'sender_profile_pic': message.sender.profile.image.url if message.sender.profile.image else '',
+                'receiver_id': message.receiver.id,
+                'receiver_username': message.receiver.username,
+                'message': message.message,
+                'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
+            }
+            messages_data.append(message_data)
+        
+        return JsonResponse(messages_data, safe=False)
 
-    # Fetch messages for the chat room
-    chat_messages = ChatMessage.objects.filter(room=chat_room).order_by('timestamp')
-    
-    messages_data = []
-    for message in chat_messages:
-        message_data = {
-            'sender_id': message.sender.id,
-            'sender_username': message.sender.username,
-            'sender_first_name': message.sender.first_name,
-            'sender_last_name': message.sender.last_name,
-            'sender_profile_pic': message.sender.profile.image.url if message.sender.profile.image else '',
-            'receiver_id': message.receiver.id,
-            'receiver_username': message.receiver.username,
-            'message': message.message,
-            'timestamp': message.timestamp.strftime('%Y-%m-%d %H:%M:%S')
-        }
-        messages_data.append(message_data)
-    
-    return JsonResponse(messages_data, safe=False)
+    elif request.method == 'POST':
+        # Handling chat clearing
+        user_id = user_pk
+
+        logger.debug(f"clear_chat called with userId: {user_id}, roomId: {room_id}")
+
+        try:
+            chat_room = get_object_or_404(ChatRoom, users__id=user_id, id=room_id)
+            
+            # Check if the user is a participant in the chat room
+            if request.user in chat_room.users.all():
+                chat_room.messages.all().delete()
+                logger.debug("Chat messages deleted successfully")
+                return JsonResponse({'status': 'chat cleared'})
+            else:
+                logger.warning("Permission denied")
+                return JsonResponse({'error': 'Permission denied'}, status=403)
+
+        except ChatRoom.DoesNotExist:
+            logger.error("Chat room not found")
+            return JsonResponse({'error': 'Chat room not found'}, status=404)
+        except Exception as e:
+            logger.error(f"Error clearing chat: {e}")
+            return JsonResponse({'error': 'An error occurred'}, status=500)
+
+    else:
+        # Handle other HTTP methods if needed
+        logger.warning("Invalid HTTP method")
+        return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
 @login_required
 def chatPage(request, *args, **kwargs):
@@ -183,4 +209,4 @@ def check_chat_room(request, user_id):
         return JsonResponse({'exists': True, 'room_id': chat_room.pk})
     else:
         return JsonResponse({'exists': False})
-
+    
