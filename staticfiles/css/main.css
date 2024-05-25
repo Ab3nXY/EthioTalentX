@@ -4,8 +4,7 @@
     left: 0;
     width: 100%;
     height: 100%;
-    z-index: -1; /* Ensure the background is behind all content */
-    /* overflow: hidden; Prevents scrollbars */
+    z-index: -1;
 }
 
 .background-overlay::before {
@@ -57,12 +56,13 @@ body {
 }
 
 .navbar {
-    background-color: rgba(0, 0, 0, 0.8);
+    background-color: rgba(0, 0, 0, 0);
     position: fixed;
     top: 0;
     width: 100%; 
     height: 60px;
     z-index: 1020;
+    opacity: 0.8;
 }
 
 .navbar-collapse.show {
@@ -211,5 +211,221 @@ footer {
       transition: all 0.2s ease-in-out;
       border-radius: 5px;
     }
+    #chatModal { 
+      right: 0;
+    }
+
+    .chat__modal_list {
+      display: none; /* Hide chat modal list on mobile (optional) */
+    }
 
   }
+
+  /* Custom card styling */
+.custom-card {
+  border: 1px solid #ddd; /* Add a border */
+  border-radius: 10px; /* Rounded corners */
+  box-shadow: 0 4px 6px rgba(0, 0, 0, 0.1); /* Add a shadow */
+  margin-bottom: 20px; /* Add some bottom margin */
+  background-color: #ddd;
+}
+
+/* Custom card header styling */
+.custom-card-header {
+  padding: 10px 20px; /* Add padding */
+  border-bottom: 1px solid #ddd; /* Add a bottom border */
+  border-radius: 10px 10px 0 0; /* Rounded corners only at the top */
+}
+
+/* Custom card title styling */
+.custom-card-title {
+  margin-bottom: 0; /* Remove bottom margin for the title */
+}
+
+/* Custom card body styling */
+.custom-card-body {
+  padding: 20px; /* Add padding */
+}
+
+/* Style links within the custom card body */
+.custom-card-body a {
+  color: #007bff; /* Set link color */
+}
+
+/* Style unordered list within the custom card body */
+.custom-card-body ul {
+  list-style-type: none; /* Remove list bullets */
+  padding-left: 0; /* Remove left padding */
+}
+
+/* Style list items within the custom card body */
+.custom-card-body li {
+  margin-bottom: 5px; /* Add bottom margin to list items */
+}
+
+/* Style buttons within the custom card body */
+.custom-card-body .btn {
+  margin-right: 10px; /* Add right margin to buttons */
+}
+
+/* Hover effect for custom cards */
+.custom-card:hover {
+  box-shadow: 0 8px 12px rgba(0, 0, 0, 0.15); /* Add a larger shadow on hover */
+  transition: box-shadow 0.3s ease; /* Smooth transition */
+}
+
+.chat__modal {
+  position: fixed;
+  display: none;
+  bottom: 0px; 
+  right: 350px;
+  z-index: 1000;
+  width: 400px;
+}
+.chat__modal_list {
+  position: fixed; 
+  bottom: 0px; 
+  right: 10px;
+  z-index: 1000;
+  width: 300px;
+}
+.chat__modal-content {
+  background-color: rgb(238, 238, 238);
+  border: 1px solid rgb(210, 210, 210);
+  border-style: groove;
+  border-top-left-radius: 10px;
+  border-top-right-radius: 10px;
+  display: flex;
+  flex-direction: column;
+  height: 70vh;
+}
+
+.chat__modal-header {
+  display: flex; 
+  align-items: center; 
+  cursor: pointer;
+  margin: 5px; 
+}
+
+.close-button {
+  background: none;
+  border: none;
+  font-size: 30px;
+  cursor: pointer;
+  color: #777;
+  margin-left: auto; 
+}
+.chat__modal-body {
+  flex: 1;
+  padding: 10px;
+  background-color: white;
+  overflow-y: auto;
+}
+
+.chat__input-container {
+  padding: 10px;
+  background-color: #f2f2f2;
+  border-top: 1px solid #ccc;
+}
+
+#id_message_send_input {
+  flex: 1; /* Makes the input field expand to fill most of the space */
+}
+
+#chatForm {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  width: 100%;
+  padding: 10px;
+}
+
+#chatForm textarea,
+#chatForm button {
+  outline: none; /* Prevents the default focus outline */
+  border: none; /* Removes any border that might show up on focus */
+}
+
+/* Remove hover styles */
+#chatForm input:hover,
+#chatForm textarea:hover,
+#chatForm button:hover {
+  background-color: white; /* Resets the background color */
+  color: initial; /* Resets the text color */
+}
+
+/* Remove focus styles */
+#chatForm input:focus,
+#chatForm textarea:focus,
+#chatForm button:focus {
+  background-color: white; /* Resets the background color */
+  color: initial; /* Resets the text color */
+  outline: none; /* Ensures no outline is shown */
+}
+.chat-room-link {
+  display: flex;
+  align-items: start;
+  text-decoration: none;
+  color: inherit;
+  padding: 10px;
+  border-bottom: 1px solid #ddd;
+}
+
+.chat-room-link:hover {
+  background-color: #f1f1f1;
+  cursor: pointer;
+}
+
+.chat-room-info {
+  flex: 1;
+  display: flex;
+  flex-direction: column;
+}
+.chat-room-date {
+  font-weight: normal;
+  color: #555;
+  font-size: 0.9em;
+}
+.chat-room-header {
+  display: flex;
+  justify-content: space-between;
+  font-weight: bold;
+}
+
+.chat-room-last-message {
+  font-size: 0.9em;
+  color: #555;
+}
+.chat__modal-body ul {
+  list-style-type: none; /* Remove bullet points */
+  padding: 0; /* Remove default padding */
+  margin: 0; /* Remove default margin */
+}
+.unread-counter{
+  position: relative;
+  top: 0;
+  right: 0;
+  background-color: red;
+  color: white;
+  width: 20px;
+  height: 20px;
+  border-radius: 50%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  font-size: 12px;
+  font-weight: bold;
+}
+
+.unread-counter-header {
+  position: absolute;
+  right: 20px;
+  top: 10px;
+  background-color: red;
+  color: white;
+  width: 25px;
+  border-radius: 50%;
+  font-size: 15px;
+  font-weight: bold;
+  text-align: center;
+}

@@ -15,6 +15,7 @@ import os
 from configurations import Configuration
 from dotenv import load_dotenv
 import dj_database_url
+from dj_database_url import config
 
 load_dotenv()
 
@@ -211,13 +212,21 @@ class Dev(Configuration):
 class Prod(Dev):
 
     DEBUG = False
+
+    # # for pythonanywhere
+    # DATABASES = {
+    #         'default': {
+    #             'ENGINE': 'django.db.backends.mysql',
+    #             'NAME': os.getenv('DB_NAME_PA'),
+    #             'USER': os.getenv('DB_USER_PA'),
+    #             'PASSWORD': os.getenv('DB_PASSWORD_PA'),
+    #             'HOST': 'Ab3nX.mysql.pythonanywhere-services.com',
+    #             'PORT': '3306',
+    #     }
+    # }
+
+    # for render
     DATABASES = {
-            'default': {
-                'ENGINE': 'django.db.backends.mysql',
-                'NAME': os.getenv('DB_NAME_PA'),
-                'USER': os.getenv('DB_USER_PA'),
-                'PASSWORD': os.getenv('DB_PASSWORD_PA'),
-                'HOST': 'Ab3nX.mysql.pythonanywhere-services.com',
-                'PORT': '3306',
-        }
+        'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600)
+
     }

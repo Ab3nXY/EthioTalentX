@@ -15,7 +15,7 @@
     {% if confirmation %}
         {% user_display confirmation.email_address.user as user_display %}
         {% if can_confirm %}
-        <p style="text-align: center; color: white; margin-top: 50px;">
+        <p style="margin-left: 28vw; color: white; margin-top: 50px;">
                 {% blocktrans with confirmation.email_address.email as email %}Please confirm that <a href="mailto:{{ email }}">{{ email }}</a> is an email address for user {{ user_display }}.{% endblocktrans %}
             </p>
             {% url 'account_confirm_email' confirmation.key as action_url %}

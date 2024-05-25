@@ -11,7 +11,7 @@ import os
 from django.core.asgi import get_asgi_application
 
 os.environ.setdefault('DJANGO_SETTINGS_MODULE', 'ethiotalentx.settings')
-os.environ.setdefault("DJANGO_CONFIGURATION", "Dev")
+os.environ.setdefault("DJANGO_CONFIGURATION", "Prod")
 
 from channels.routing import ProtocolTypeRouter , URLRouter
 from chat import routing

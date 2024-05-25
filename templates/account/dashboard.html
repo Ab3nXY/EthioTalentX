@@ -45,13 +45,13 @@
       <div class="row">
         <div class="col">
           <div class="custom-card">
-            <div class="custom-card-header bg-secondary text-white">
+            <div class="custom-card-header text-white" style="background-color: skyblue;">
               <h5 class="custom-card-title">Experience</h5>
             </div>
             <div class="custom-card-body">
               {% if user.profile.experience.all %}
                 {% for exp in user.profile.experience.all %}
-                <div class="custom-card mb-2" style="background-color: rgb(152, 163, 167);">
+                <div class="custom-card mb-2" style="background-color: rgb(205, 205, 205);">
                     <div class="custom-card-body p-2 fs-8">
                         <h6 class="custom-card-title">{{ exp.title }} at {{ exp.company }}</h6>
                         <p class="custom-card-text mb-0">{{ exp.location }}</p>
@@ -72,13 +72,13 @@
       <div class="row mt-4">
         <div class="col">
           <div class="custom-card">
-            <div class="custom-card-header bg-secondary text-white">
+            <div class="custom-card-header text-white" style="background-color: skyblue;">
               <h5 class="custom-card-title">Education</h5>
             </div>
             <div class="custom-card-body">
               {% if user.profile.education.all %}
                 {% for edu in user.profile.education.all %}
-                <div class="custom-card mb-2" style="background-color: rgb(152, 163, 167);">
+                <div class="custom-card mb-2" style="background-color: rgb(205, 205, 205);">
                     <div class="custom-card-body p-2 fs-8">
                         <h6 class="custom-card-title mb-0">{{ edu.degree }} in {{ edu.fieldofstudy }} at {{ edu.school }}</h6>
                         <p class="custom-card-text mb-0">{{ edu.from_date|date:"F Y" }} - {% if edu.current %}Present{% else %}{{ edu.to_date|date:"F Y" }}{% endif %}</p>

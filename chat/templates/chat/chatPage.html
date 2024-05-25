@@ -137,8 +137,6 @@ function openChatModal(userPk, userId) {
 }
 
 function confirmDeleteChat(userId, roomId) {
-    console.log("confirmDeleteChat called with userId:", userId, "and roomId:", roomId);
-
     const confirmation = confirm("Are you sure you want to delete all chat messages? This action cannot be undone.");
 
     if (confirmation) {
@@ -160,7 +158,6 @@ function confirmDeleteChat(userId, roomId) {
 
             // Check if 'status' property exists in the response data
             if (data && data.status === 'chat cleared') {
-                console.log("Chat messages deleted successfully!");
                 const chatModalContent = document.querySelector('#chatModalBody'); // Assuming chat messages are within this element
                 if (chatModalContent) {
                     chatModalContent.innerHTML = ''; // Clear all child elements
@@ -231,7 +228,6 @@ function createChatRoom(userPk, userId) {
     })
     .then(data => {
         document.querySelector("#chat_room_pk").value = data.room_id;
-        console.log("New chat room created:", data.room_id);
         loadChatRoomMessages(userId, data.room_id);
     })
     .catch(error => console.error('Error creating chat room:', error));

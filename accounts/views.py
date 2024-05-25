@@ -5,14 +5,18 @@ from .forms import ProfileForm, ExperienceForm, EducationForm
 from .models import Profile, Skill, Education, Experience
 from django.shortcuts import get_object_or_404
 from django.views.generic import CreateView, DeleteView, UpdateView, DetailView
-from django.utils.decorators import method_decorator
 from django.urls import reverse_lazy
 from django.contrib.auth.mixins import LoginRequiredMixin
 from django.http import JsonResponse
 from django.contrib.messages.views import SuccessMessageMixin
+from django.contrib.auth import get_user_model
 
 def index(request):
-  return render(request, 'index.html')
+  User = get_user_model()
+  if request.user.is_authenticated:
+    return redirect('dashboard') 
+  else:
+    return render(request, 'index.html')
 
 @login_required
 def profile(request):

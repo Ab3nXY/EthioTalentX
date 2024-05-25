@@ -59,30 +59,23 @@ def messages_detail(request, user_pk, room_id):
         # Handling chat clearing
         user_id = user_pk
 
-        logger.debug(f"clear_chat called with userId: {user_id}, roomId: {room_id}")
-
         try:
             chat_room = get_object_or_404(ChatRoom, users__id=user_id, id=room_id)
 
             # Check if the user is a participant in the chat room
             if request.user in chat_room.users.all():
                 chat_room.messages.all().delete()
-                logger.debug("Chat messages deleted successfully")
                 return JsonResponse({'status': 'chat cleared'})
             else:
-                logger.warning("Permission denied")
                 return JsonResponse({'error': 'Permission denied'}, status=403)
 
         except ChatRoom.DoesNotExist:
-            logger.error("Chat room not found")
             return JsonResponse({'error': 'Chat room not found'}, status=404)
         except Exception as e:
-            logger.error(f"Error clearing chat: {e}")
             return JsonResponse({'error': 'An error occurred'}, status=500)
 
     else:
         # Handle other HTTP methods if needed
-        logger.warning("Invalid HTTP method")
         return JsonResponse({'error': 'Invalid HTTP method'}, status=405)
 
 
