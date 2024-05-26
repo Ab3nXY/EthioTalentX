@@ -27,7 +27,7 @@ BASE_DIR = Path(__file__).resolve().parent.parent
 # SECURITY WARNING: keep the secret key used in production secret!
 SECRET_KEY = os.getenv('SECRET_KEY')
 
-ALLOWED_HOSTS = ['localhost', '127.0.0.1', 'ethiotalenthub.onrender.com', 'https://ethiotalenthub.onrender.com','ab3nx.pythonanywhere.com']
+ALLOWED_HOSTS = ['ethiotalenthub.onrender.com']
 
 #Email from gmail
 EMAIL_HOST_USER=os.getenv('EMAIL_HOST_USER')
