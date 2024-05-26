@@ -12,7 +12,6 @@ https://docs.djangoproject.com/en/5.0/ref/settings/
 
 from pathlib import Path
 import os
-from configurations import Configuration
 from dotenv import load_dotenv
 import dj_database_url
 from dj_database_url import config
