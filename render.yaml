@@ -1,0 +1,26 @@
+databases:
+  - name: ethiotalentx
+    plan: free
+    engine: postgres
+
+services:
+  - type: web
+    plan: free
+    name: ethiotalentx
+    runtime: python
+    buildCommand: "./build.sh"
+    startCommand: startCommand: "daphne -b 0.0.0.0 --port $PORT mysite.asgi:application"
+    envVars:
+      - key: DATABASE_URL
+        fromDatabase:
+          name: ethiotalentx
+          property: connectionString
+      - key: SECRET_KEY
+        generateValue: true
+      - key: REDIS_URL 
+        fromService: 
+          type: redis  
+          name: ethiotalentx-redis
+http:
+  port: 80
+  forward: https://$host:$server_port
