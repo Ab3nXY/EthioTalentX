@@ -230,3 +230,12 @@ class Prod(Dev):
         'default': dj_database_url.config(default=config('DATABASE_URL'), conn_max_age=600)
 
     }
+    # for render chatapp
+    CHANNEL_LAYERS = {
+        "default": {
+            "BACKEND": "channels_redis.core.RedisChannelLayer",
+            "CONFIG": {
+                "hosts": [("Abenezer-free-db", 6379)],
+            },
+        },
+    }
