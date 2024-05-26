@@ -21,13 +21,7 @@ services:
         fromService: 
           type: redis  
           name: ethiotalentx-redis
-    disk:
-      - mountPath: /var/www/static
-        name: static
-        sizeGB: 1
-      - mountPath: /var/www/media
-        name: media
-        sizeGB: 1
+
 http:
   port: 80
   forward: https://$host:$server_port
