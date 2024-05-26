@@ -9,7 +9,7 @@ services:
     name: ethiotalentx
     runtime: python
     buildCommand: "./build.sh"
-    startCommand: startCommand: "daphne -b 0.0.0.0 --port $PORT mysite.asgi:application"
+    startCommand: startCommand: "daphne -b 0.0.0.0 --port $PORT ethiotalentx.asgi:application"
     envVars:
       - key: DATABASE_URL
         fromDatabase:
