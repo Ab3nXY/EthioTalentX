@@ -84,7 +84,7 @@ function openChatModal(userPk, userId) {
         if (chatSocket) {
             chatSocket.close();
         }
-        chatSocket = new WebSocket(`ws://${window.location.host}/ws/chat/?room=${roomId}`);
+        chatSocket = new WebSocket(`wss://${window.location.host}/ws/chat/?room=${roomId}`);
 
         chatSocket.onopen = () => console.log("WebSocket connection opened!");
         chatSocket.onclose = () => console.log("WebSocket connection closed!");
