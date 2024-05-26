@@ -9,7 +9,7 @@
 {% endblock BG %}
 
 {% block content %}
-<div class="container mt-4">
+<div class="container" style="padding-left: 60px;">
   <div class="row justify-content-center justify-content-md-start">
     <div class="col-md-8">
       <div class="custom-card">
@@ -33,7 +33,7 @@
                 {% endfor %}
               </ul>
               {% if not user.profile.bio or not user.profile.skills.all %}
-                <p><a href="{% url 'profile' %}" class="btn btn-primary">Complete your profile</a></p>
+                <p><a href="{% url 'profile' %}" class="btn btn-primary" style="color: white;">Complete your profile</a></p>
               {% endif %}
             </div>
           </div>
