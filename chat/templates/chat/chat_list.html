@@ -3,7 +3,7 @@
 <div class="chat__modal_list" id="chatListModal">
     <div class="chat__modal-content" style="height: 100%;">
         <div class="chat__modal-header" onclick="toggleChatListModal()">
-            <img src="{{ request.user.profile.image.url }}" alt="Profile Picture" class="profile-pic me-2" style="width: 50px; border-radius: 50%;">
+            <img src="{{ request.user.profile.image.url }}" alt="Profile Picture" class="profile-pic me-2" style="width: 50px; height: 50px; border-radius: 50%; object-fit: cover;">
             <p style="margin: 0;">Messaging</p>
             <span id="unreadCounterHeader" class="unread-counter-header"></span>
         </div>
@@ -45,7 +45,7 @@
                         var listItem = document.createElement('li');
                         listItem.innerHTML = `
                             <div class="chat-room-link" data-user-pk="${chat_room.other_user_id}" data-user-id="{{ request.user.pk }}" onclick="openChatModal('${chat_room.other_user_id}', '{{ request.user.pk }}')">
-                                <img src="${chat_room.other_user_profile_pic}" alt="Profile Picture" class="profile-pic me-2" style="width: 30px; border-radius: 50%;">
+                                <img src="${chat_room.other_user_profile_pic}" alt="Profile Picture" class="profile-pic me-2" style="width: 30px; height: 30px; border-radius: 50%; object-fit: cover;">
                                 <div class="chat-room-info">
                                     <div class="chat-room-header">
                                         <span>${chat_room.other_user_first_name} ${chat_room.other_user_last_name}</span>

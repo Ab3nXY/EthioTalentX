@@ -216,7 +216,7 @@ footer {
       right: 5px;
     }
     .chat__modal_list {
-      display: none; /* Hide chat modal list on mobile (optional) */
+      display: hidden; /* Hide chat modal list on mobile (optional) */
     }
 
   }
@@ -425,9 +425,9 @@ footer {
   top: 10px;
   background-color: red;
   color: white;
-  width: 25px;
+  width: 20px;
   border-radius: 50%;
-  font-size: 15px;
+  font-size: 12px;
   font-weight: bold;
   text-align: center;
 }

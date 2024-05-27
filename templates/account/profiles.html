@@ -24,7 +24,7 @@
 
           <div class="col-md-8 col-12 profile-image-container" style="margin: 10px;">
             <div href="{% url 'profile_detail' pk=profile.pk %}">
-              <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" alt="Profile Image">
+              <img src="{{ profile.image.url }}" class="card-img-top profile-image rounded-circle" style="width: 200px; height: 200px; object-fit: cover;" alt="Profile Image">
             </div>
           </div>
 
