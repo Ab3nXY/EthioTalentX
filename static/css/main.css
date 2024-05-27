@@ -214,7 +214,7 @@ footer {
     #chatModal { 
       width: 300px;
       right: 10px;
-      bottom: 60px;
+      z-index: 1010;
     }
   }
 .chat__clear-container { 

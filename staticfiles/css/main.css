@@ -212,13 +212,10 @@ footer {
       border-radius: 5px;
     }
     #chatModal { 
-      width: 80vw;
-      right: 5px;
+      width: 300px;
+      right: 10px;
+      z-index: 1010;
     }
-    .chat__modal_list {
-      display: hidden; /* Hide chat modal list on mobile (optional) */
-    }
-
   }
 .chat__clear-container { 
   text-align: end;
