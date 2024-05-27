@@ -216,6 +216,10 @@ footer {
       right: 10px;
       z-index: 1010;
     }
+    .chat-room-link:hover {
+      background-color: #f1f1f1;
+      cursor: pointer;
+    }
   }
 .chat__clear-container { 
   text-align: end;
