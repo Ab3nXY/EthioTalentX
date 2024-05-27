@@ -54,13 +54,6 @@
                     <li class="nav-item">
                         <a class="nav-link me-2" href="{% url 'account_logout' %}"><i class="fa-solid fa-right-from-bracket me-3" style="color: rgb(247, 178, 178);"></i>Logout</a>
                     </li>
-                    <li class="nav-item">
-                        <a class="nav-link me-2" onclick="toggleChatListModal()">
-                            <span class="fa-solid fa-envelope me-0"></span>
-                            <span id="unreadCounterHeader" class="unread-counter-header message-counter badge bg-danger rounded-circle position-absolute" style="right: 15px; top: 5px; " ></span>
-                        </a>
-                    </li>
-
                     {% else %}
                     <li class="nav-item">
                         <a class="nav-link" href="{% url 'account_signup' %}">Register</a>
