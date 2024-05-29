@@ -9,35 +9,35 @@ Collaborate with Ease: Channels integration lays the groundwork for advanced rea
 
 **Getting Started**
 
-git clone https://github.com/Ab3nXY/EthioTalentX
+```git clone https://github.com/Ab3nXY/EthioTalentX```
 
 Caution: Use the correct repository URL from your Git provider.
 
 **Navigate to Project Directory:**
 
-cd EthioTalentX
+```cd EthioTalentX```
 
 **Install Dependencies:**
 
-pip install -r requirements.txt
+```pip install -r requirements.txt```
 
 This command installs all the necessary Python packages listed in the requirements.txt file.
 
 **Apply Database Migrations:**
 
-python manage.py migrate
+```python manage.py migrate```
 
 This command creates the database tables based on your models.
 
 **Create a Superuser Account:**
 
-python manage.py createsuperuser
+```python manage.py createsuperuser```
 
 Follow the prompts to create a superuser account, which grants you full administrative access to the application.
 
 **Run the Application:**
 
-python manage.py runserver
+```python manage.py runserver```
 
 
 **License:**
